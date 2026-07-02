@@ -97,6 +97,32 @@ de la charte. Pour les remplacer par de vraies photos :
 Pour **ajouter** une réalisation, dupliquer un bloc `<figure class="galerie-item" data-cat="…">`
 en choisissant la catégorie : `mariage`, `plateau`, `charcuterie` ou `plat`.
 
+## Déploiement & remise au client
+
+Le dépôt contient un workflow GitHub Pages (`.github/workflows/deploy.yml`) : chaque commit
+sur `main` — y compris ceux créés par l'administration — republie le site automatiquement.
+
+### Mise en ligne (une seule fois)
+
+1. Fusionner la branche de travail dans `main`.
+2. Dans GitHub : **Settings → Pages → Source : GitHub Actions**.
+   (Sur un compte gratuit, le dépôt doit être **public** pour utiliser Pages.)
+3. Le site est servi sur `https://<compte>.github.io/Les-Gourmets-du-Perche/` ;
+   pour un domaine personnalisé (ex. `lesgourmetsduperche.fr`), l'ajouter dans
+   **Settings → Pages → Custom domain** et créer l'enregistrement DNS indiqué.
+
+### Vendre / transférer le site au commerçant
+
+1. Créer (ou faire créer) un compte GitHub gratuit au client.
+2. **Settings → Transfer ownership** pour transférer le dépôt sur son compte.
+3. Mettre à jour `DEPOT.proprietaire` en tête de `admin/admin.js` avec le nouveau compte.
+4. Réactiver Pages sur le dépôt transféré (étape 2 de la mise en ligne) et re-pointer
+   le domaine si besoin.
+5. Le client génère **sa propre clé GitHub** (procédure guidée sur l'écran de connexion
+   de l'admin) et change le mot de passe dans la rubrique Sécurité.
+
+Aucun coût d'hébergement : seuls le domaine (~10 €/an) reste à la charge du client.
+
 ## Informations intégrées (sources publiques)
 
 - Boutique historique : 11 place de l'Hôtel de Ville, 61290 Longny-au-Perche — 02 33 73 62 51
