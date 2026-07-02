@@ -65,7 +65,7 @@ directement par le serveur.
 
 ### Sécurité
 
-- **Mot de passe initial : `Test1`** — à changer dès la première connexion dans la
+- **Mot de passe initial : `Test1234`** — à changer dès la première connexion dans la
   rubrique Sécurité (8 caractères minimum).
 - Authentification **côté serveur** : empreinte PBKDF2-SHA256 (sel aléatoire,
   150 000 itérations, comparaison à temps constant), jamais de mot de passe en clair.
