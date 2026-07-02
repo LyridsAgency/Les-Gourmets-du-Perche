@@ -1,17 +1,39 @@
-# Les Gourmets du Perche — Site vitrine
+# Les Gourmets du Perche — Site vitrine & administration
 
-Site vitrine de la **Maison Brard**, boucherie-charcuterie-traiteur à Longny-au-Perche et Irai (Orne),
-conçu aux couleurs du logo de la maison.
+Site de la **Maison Brard**, boucherie-charcuterie-traiteur à Longny-au-Perche et Irai (Orne),
+conçu aux couleurs du logo de la maison. Application **Node.js (Express)** : le serveur sert
+le site vitrine et une API d'administration sécurisée.
 
-## Aperçu
+## Démarrage
 
-- **Site statique** : HTML / CSS / JavaScript, sans framework ni étape de build.
-  Il suffit d'ouvrir `index.html` ou de déployer le dossier tel quel (GitHub Pages, Netlify, OVH…).
-- **Charte graphique** issue du logo et de la devanture :
-  - Rouge du logo : `#C41A14`
-  - Bordeaux de l'enseigne : `#5C2430`
-  - Crème boucherie : `#FAF4EA`
-  - Filet doré : `#C89B5A`
+```bash
+npm install
+npm start          # http://localhost:3000  —  admin : http://localhost:3000/admin/
+```
+
+Variables d'environnement :
+
+| Variable | Défaut | Rôle |
+|---|---|---|
+| `PORT` | `3000` | Port d'écoute |
+| `DATA_DIR` | `./data` | Dossier persistant : contenu édité (`content.json`) et photos (`uploads/`) |
+| `SESSION_SECRET` | aléatoire au démarrage | Secret des cookies de session (à fixer en production) |
+
+Au premier démarrage, le serveur copie `content.json` (graine versionnée) vers
+`DATA_DIR/content.json` ; ensuite, c'est la copie de `DATA_DIR` qui fait foi.
+
+## Architecture
+
+```
+server.js          Serveur Express : site + API admin (sessions, PBKDF2, uploads)
+content.json       Contenu initial (copié dans DATA_DIR au premier démarrage)
+public/            Site vitrine statique (HTML/CSS/JS) et interface d'admin
+data/              (créé à l'exécution, non versionné) contenu édité + photos
+render.yaml        Blueprint de déploiement Render
+```
+
+- **Charte graphique** issue du logo et de la devanture : rouge `#C41A14`,
+  bordeaux `#5C2430`, crème `#FAF4EA`, doré `#C89B5A`.
 - **Typographies** : Playfair Display (titres) et Jost (texte), via Google Fonts.
 
 ## Sections du site
@@ -24,125 +46,82 @@ conçu aux couleurs du logo de la maison.
 | Réalisations | Galerie filtrable (mariages, plateaux, charcuterie, plats) avec visionneuse |
 | Avis | Témoignages clients (note 5/5, +40 avis) |
 | Boutiques | Adresses, horaires et itinéraires de Longny-au-Perche et Irai + carte |
-| Contact | Formulaire de devis, téléphone cliquable, e-mail, Facebook |
+| Contact | Formulaire de devis, téléphone cliquable, e-mail, réseaux sociaux |
 
 ## Administration (`/admin`)
 
-Le site embarque un **tableau de bord d'administration** (`admin/index.html`) qui permet au
-commerçant de tout modifier sans toucher au code :
+Tableau de bord permettant au commerçant de tout modifier sans toucher au code :
 
 - **Bandeau d'annonce** en haut du site (nouveautés, fermetures, offres de fêtes…)
 - **Coordonnées** : téléphones des deux boutiques, e-mail
-- **Réseaux sociaux** : Facebook, Instagram, TikTok (un champ vide masque le réseau sur le site)
+- **Réseaux sociaux** : Facebook, Instagram, TikTok (un champ vide masque le réseau)
 - **Horaires** des deux boutiques (lignes libres + case « Fermé »)
-- **Réalisations** : ajout de photos, légende, catégorie, réordonnancement, suppression
+- **Réalisations** : envoi de photos, légende, catégorie, réordonnancement, suppression
 - **Avis clients** : ajout/suppression de témoignages et note globale
+- **Sécurité** : changement du mot de passe en autonomie
 
-### Fonctionnement
+Les modifications sont **immédiates** : le contenu est écrit dans `DATA_DIR` et servi
+directement par le serveur.
 
-Aucun serveur : le contenu éditable vit dans `content.json` (chargé par `js/contenu.js` sur le
-site public) et l'admin enregistre directement dans le dépôt GitHub via son API. Chaque
-« Enregistrer » crée un commit ; l'hébergement statique (GitHub Pages, Netlify…) republie le
-site en une à deux minutes.
+### Sécurité
 
-### Accès & sécurité
-
-La connexion à l'admin se fait par **mot de passe** :
-
-- Mot de passe initial : **`Test1`** — à changer immédiatement dans la rubrique
-  **Sécurité** du tableau de bord (8 caractères minimum, changement effectif en 1 à 2 minutes).
-- Le mot de passe n'est jamais stocké en clair : seule une empreinte **PBKDF2-SHA256**
-  (sel aléatoire, 150 000 itérations) est conservée dans `content.json` et vérifiée
-  dans le navigateur (WebCrypto).
-- À la **première connexion sur un appareil**, une clé GitHub est également demandée :
-  un *fine-grained personal access token* limité à ce dépôt avec la seule permission
-  **Contents : Read and write** (GitHub → Settings → Developer settings → Fine-grained tokens).
-  Elle reste dans le navigateur (`localStorage`) et n'est plus redemandée ; la rubrique
-  Sécurité permet de l'oublier sur l'appareil.
-- Le dépôt cible est configuré en tête de `admin/admin.js` (`DEPOT.proprietaire` /
-  `DEPOT.repo`) ; la branche par défaut est détectée automatiquement.
-
-**Modèle de sécurité, en toute transparence** : le site est statique, sans serveur. La
-protection réelle des données est la **clé GitHub** (sans elle, aucune écriture n'est
-possible) ; le mot de passe est une barrière d'accès au tableau de bord. Son empreinte
-étant publiée avec le site, un mot de passe **fort** est indispensable — un mot de passe
-faible comme `Test1` peut être retrouvé par force brute, d'où l'obligation de le changer
-dès la mise en service.
-
-Autres mesures en place : Content-Security-Policy sur le site et l'admin (scripts et
-connexions limités aux domaines nécessaires), champ anti-spam (honeypot) sur le formulaire,
-`noindex` sur l'admin, échappement systématique du contenu injecté (`textContent` /
-`createElement`, jamais d'`innerHTML` avec des données).
+- **Mot de passe initial : `Test1`** — à changer dès la première connexion dans la
+  rubrique Sécurité (8 caractères minimum).
+- Authentification **côté serveur** : empreinte PBKDF2-SHA256 (sel aléatoire,
+  150 000 itérations, comparaison à temps constant), jamais de mot de passe en clair.
+  L'empreinte ne quitte jamais le serveur (`/content.json` public en est expurgé).
+- **Session** par cookie `httpOnly` (SameSite Lax, Secure derrière HTTPS), durée 8 h.
+- **Anti-force brute** : 5 tentatives ratées → blocage 15 minutes par adresse IP.
+- **Uploads** : formats limités à JPG/PNG/WebP, 8 Mo max, noms de fichiers générés
+  par le serveur ; chemins d'images validés par liste blanche à l'enregistrement.
+- Contenu reçu par l'API **assaini champ par champ** (types, longueurs, catégories).
+- Content-Security-Policy sur le site et l'admin ; honeypot anti-spam sur le
+  formulaire ; admin en `noindex` ; injection DOM par `textContent`/`createElement`
+  uniquement.
 
 ## Mise en relation avec les clients
 
-- **Formulaire de devis** : branché sur [FormSubmit](https://formsubmit.co)
-  vers `lesgourmetsduperche@gmail.com`. Au **premier envoi**, FormSubmit envoie un e-mail de
-  confirmation à cette adresse : il faut cliquer sur le lien d'activation une seule fois.
-  Aucun compte ni serveur n'est nécessaire.
-- **Téléphone** : tous les numéros sont cliquables (`tel:`), avec un bouton d'appel flottant sur mobile.
-- **Référencement local** : données structurées Schema.org (`ButcherShop`) intégrées à la page
-  (adresse, horaires, note moyenne) pour Google.
+- **Formulaire de devis** : envoyé via [FormSubmit](https://formsubmit.co) vers
+  `lesgourmetsduperche@gmail.com` (au premier envoi, cliquer sur l'e-mail
+  d'activation reçu — une seule fois).
+- **Téléphones cliquables** partout + bouton d'appel flottant sur mobile.
+- **Référencement local** : données structurées Schema.org (`ButcherShop`).
+
+## Déploiement sur Render
+
+Le dépôt contient un blueprint `render.yaml` :
+
+1. Sur [render.com](https://render.com) : **New → Blueprint** → connecter ce dépôt.
+2. Render crée le service web Node avec un **disque persistant** monté sur `/var/data`
+   (contenu édité + photos conservés entre les déploiements) et un `SESSION_SECRET`
+   généré automatiquement.
+3. Chaque `git push` sur la branche suivie redéploie automatiquement.
+
+⚠️ Le disque persistant nécessite l'offre **Starter** (~7 $/mois). Sur l'offre
+gratuite, le service s'endort après inactivité et **les modifications de l'admin
+sont perdues à chaque redéploiement** (système de fichiers éphémère) — utilisable
+pour une démo, pas pour la production.
+
+Domaine personnalisé : Render → Settings → Custom Domains → ajouter
+`lesgourmetsduperche.fr` et créer chez le registrar l'enregistrement indiqué
+(CNAME `www` → `<service>.onrender.com`, A/ALIAS pour l'apex). Certificat HTTPS
+automatique et gratuit.
+
+## Vendre / transférer le site au commerçant
+
+1. Créer (ou faire créer) un compte GitHub et un compte Render au client.
+2. GitHub : **Settings → Transfer ownership** pour transférer le dépôt.
+3. Render : transférer le service (Team) ou recréer le Blueprint depuis le dépôt
+   transféré — le contenu du disque peut être re-saisi via l'admin ou copié.
+4. Le client change le mot de passe dans la rubrique Sécurité de l'admin.
+
+Coûts pour le client : instance Render Starter (~7 $/mois) + domaine (~10 €/an).
 
 ## Remplacer les visuels de la galerie
 
-Les images de `assets/realisations/` sont des **illustrations provisoires (SVG)** aux couleurs
-de la charte. Pour les remplacer par de vraies photos :
-
-1. Déposer les photos (format paysage 4:3 conseillé, ~1200 px de large) dans `assets/realisations/`.
-2. Dans `index.html`, section *Réalisations*, remplacer le chemin `src` de chaque `<img>`
-   (ex. `assets/realisations/mariage-buffet.svg` → `assets/realisations/mariage-buffet.jpg`).
-3. Adapter le texte `alt` et la légende `<figcaption>` si besoin.
-
-Pour **ajouter** une réalisation, dupliquer un bloc `<figure class="galerie-item" data-cat="…">`
-en choisissant la catégorie : `mariage`, `plateau`, `charcuterie` ou `plat`.
-
-## Déploiement & remise au client
-
-Le dépôt contient un workflow GitHub Pages (`.github/workflows/deploy.yml`) : chaque commit
-sur `main` — y compris ceux créés par l'administration — republie le site automatiquement.
-
-### Mise en ligne (une seule fois)
-
-1. Fusionner la branche de travail dans `main`.
-2. Dans GitHub : **Settings → Pages → Source : GitHub Actions**.
-   (Sur un compte gratuit, le dépôt doit être **public** pour utiliser Pages.)
-3. Le site est servi sur `https://<compte>.github.io/Les-Gourmets-du-Perche/`.
-
-### Domaine personnalisé (ex. `lesgourmetsduperche.fr`)
-
-1. **Acheter le domaine** chez un registrar français (OVH, Gandi, Ionos… ~10 €/an).
-2. **Chez le registrar**, dans la zone DNS du domaine, créer :
-
-   | Type | Nom | Valeur |
-   |---|---|---|
-   | A | `@` | `185.199.108.153` |
-   | A | `@` | `185.199.109.153` |
-   | A | `@` | `185.199.110.153` |
-   | A | `@` | `185.199.111.153` |
-   | CNAME | `www` | `<compte>.github.io.` |
-
-3. **Dans GitHub** : Settings → Pages → **Custom domain** → saisir `lesgourmetsduperche.fr`
-   → Save, puis cocher **Enforce HTTPS** une fois la vérification passée (quelques minutes
-   à quelques heures, le temps de la propagation DNS). Le certificat HTTPS est généré
-   automatiquement et gratuitement.
-4. Le site répond alors sur `https://lesgourmetsduperche.fr` (le chemin
-   `/Les-Gourmets-du-Perche/` disparaît — les liens du site étant relatifs, rien à changer).
-
-En pratique, c'est une opération à faire **une fois, par l'agence, lors de la remise** :
-le client n'a ensuite plus qu'à payer le renouvellement annuel du domaine chez le registrar.
-
-### Vendre / transférer le site au commerçant
-
-1. Créer (ou faire créer) un compte GitHub gratuit au client.
-2. **Settings → Transfer ownership** pour transférer le dépôt sur son compte.
-3. Mettre à jour `DEPOT.proprietaire` en tête de `admin/admin.js` avec le nouveau compte.
-4. Réactiver Pages sur le dépôt transféré (étape 2 de la mise en ligne) et re-pointer
-   le domaine si besoin.
-5. Le client génère **sa propre clé GitHub** (procédure guidée sur l'écran de connexion
-   de l'admin) et change le mot de passe dans la rubrique Sécurité.
-
-Aucun coût d'hébergement : seuls le domaine (~10 €/an) reste à la charge du client.
+Les images de `public/assets/realisations/` sont des illustrations provisoires (SVG)
+aux couleurs de la charte. Le plus simple : les remplacer **directement depuis
+l'admin** (rubrique Réalisations → Photo) avec les vraies photos de la maison.
 
 ## Informations intégrées (sources publiques)
 

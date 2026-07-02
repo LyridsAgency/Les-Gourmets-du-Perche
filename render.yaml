@@ -1,0 +1,20 @@
+# Blueprint Render — Les Gourmets du Perche
+# Le disque persistant conserve le contenu édité et les photos entre les
+# déploiements ; il nécessite une instance payante (Starter).
+services:
+  - type: web
+    name: les-gourmets-du-perche
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /content.json
+    envVars:
+      - key: DATA_DIR
+        value: /var/data
+      - key: SESSION_SECRET
+        generateValue: true
+    disk:
+      name: donnees
+      mountPath: /var/data
+      sizeGB: 1

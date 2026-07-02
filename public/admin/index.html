@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://api.github.com; form-action 'self'; base-uri 'self'; object-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'">
   <title>Administration — Les Gourmets du Perche</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="../assets/img/logo.png">
@@ -22,19 +22,6 @@
       <p>Gérez le contenu de votre site : annonce, horaires, coordonnées, réseaux sociaux, réalisations et avis.</p>
       <label for="champMdp">Mot de passe</label>
       <input type="password" id="champMdp" autocomplete="current-password">
-      <div class="bloc-token" id="blocToken" hidden>
-        <label for="champToken">Clé GitHub (première configuration uniquement)</label>
-        <input type="password" id="champToken" placeholder="github_pat_…" autocomplete="off">
-        <details class="connexion-aide">
-          <summary>Comment obtenir la clé GitHub&nbsp;?</summary>
-          <ol>
-            <li>Connectez-vous à GitHub puis ouvrez <em>Settings → Developer settings → Fine-grained personal access tokens → Generate new token</em>.</li>
-            <li>Dans <em>Repository access</em>, choisissez <em>Only select repositories</em> et sélectionnez le dépôt du site.</li>
-            <li>Dans <em>Permissions → Repository permissions</em>, passez <strong>Contents</strong> à <strong>Read and write</strong>.</li>
-            <li>Générez le jeton et collez-le ci-dessus. Il reste enregistré uniquement dans ce navigateur&nbsp;: cette étape n'est demandée qu'une seule fois par appareil.</li>
-          </ol>
-        </details>
-      </div>
       <button class="btn btn-primary btn-bloc" id="btnConnexion">Se connecter</button>
       <p class="connexion-erreur" id="connexionErreur" hidden></p>
     </div>
@@ -70,7 +57,7 @@
           <ol>
             <li>Modifiez vos contenus dans les rubriques du menu de gauche.</li>
             <li>Cliquez sur <strong>Enregistrer les modifications</strong> en bas de page.</li>
-            <li>Le site est mis à jour automatiquement en une à deux minutes.</li>
+            <li>Le site est mis à jour immédiatement.</li>
           </ol>
         </div>
       </section>
@@ -149,7 +136,7 @@
       <!-- Sécurité -->
       <section class="section-admin" id="section-securite">
         <h2>Sécurité</h2>
-        <p class="sous-titre">Changez ici le mot de passe d'accès à cette administration. Choisissez un mot de passe long et unique (8 caractères minimum).</p>
+        <p class="sous-titre">Changez ici le mot de passe d'accès à cette administration. Choisissez un mot de passe long et unique (8 caractères minimum). Le changement est immédiat.</p>
         <label>Mot de passe actuel
           <input type="password" id="champMdpActuel" autocomplete="current-password">
         </label>
@@ -166,11 +153,11 @@
         <div class="encart">
           <h3>Bon à savoir</h3>
           <ol>
-            <li>Le mot de passe n'est jamais enregistré en clair : seule une empreinte chiffrée est conservée.</li>
-            <li>Le changement est immédiat : l'ancien mot de passe ne fonctionne plus dès l'enregistrement (comptez 1 à 2 minutes de mise en ligne).</li>
-            <li>La clé GitHub reste la protection principale des données : ne la partagez jamais.</li>
+            <li>Le mot de passe n'est jamais enregistré en clair : seule une empreinte chiffrée est conservée sur le serveur.</li>
+            <li>L'ancien mot de passe ne fonctionne plus dès l'enregistrement.</li>
+            <li>Après 5 tentatives ratées, la connexion est bloquée 15 minutes par sécurité.</li>
+            <li>Votre session expire après 8 heures ou à la déconnexion.</li>
           </ol>
-          <button class="btn btn-secondaire" id="btnOublierCle">Oublier la clé GitHub sur cet appareil</button>
         </div>
       </section>
     </main>
