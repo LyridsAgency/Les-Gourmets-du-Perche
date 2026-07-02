@@ -1,0 +1,569 @@
+/* ==========================================================================
+   Les Gourmets du Perche — Maison Brard
+   Charte issue du logo : rouge #C41A14 sur blanc, bordeaux de la devanture.
+   ========================================================================== */
+
+:root {
+  /* Couleurs du logo & de la devanture */
+  --rouge: #c41a14;          /* rouge du logo */
+  --rouge-fonce: #9c130e;    /* rouge appuyé (survols) */
+  --bordeaux: #5c2430;       /* bordeaux de l'enseigne « Charcutier » */
+  --bordeaux-fonce: #431a24;
+  --creme: #faf4ea;          /* fond crème boucherie */
+  --creme-2: #f2e7d6;
+  --blanc: #ffffff;
+  --encre: #2e1b18;          /* texte principal, brun très foncé */
+  --encre-douce: #6b5550;
+  --or: #c89b5a;             /* filet doré, étoiles */
+  --ombre: 0 12px 32px rgba(67, 26, 36, 0.12);
+
+  --police-titre: "Playfair Display", Georgia, serif;
+  --police-texte: "Jost", "Segoe UI", sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+
+body {
+  font-family: var(--police-texte);
+  color: var(--encre);
+  background: var(--blanc);
+  line-height: 1.65;
+  font-size: 1.0625rem;
+}
+
+img { max-width: 100%; display: block; }
+
+.container { width: min(1160px, 92%); margin-inline: auto; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  clip: rect(0 0 0 0); overflow: hidden; white-space: nowrap;
+}
+
+/* ---------- Typographie ---------- */
+
+h1, h2, h3 { font-family: var(--police-titre); line-height: 1.15; color: var(--encre); }
+
+h1 { font-size: clamp(2.1rem, 4.6vw, 3.4rem); font-weight: 700; }
+h1 em { font-style: italic; color: var(--rouge); }
+h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); font-weight: 600; margin-bottom: 1rem; }
+h3 { font-size: 1.25rem; font-weight: 600; }
+
+p { margin-bottom: 1rem; }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--rouge); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--rouge-fonce); }
+
+.surtitre {
+  font-size: 0.82rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--rouge);
+  margin-bottom: 0.75rem;
+}
+.surtitre-clair { color: var(--or); }
+
+/* ---------- Boutons ---------- */
+
+.btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--police-texte);
+  font-weight: 600; font-size: 0.95rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: var(--rouge); color: var(--blanc);
+  box-shadow: 0 6px 18px rgba(196, 26, 20, 0.32);
+}
+.btn-primary:hover { background: var(--rouge-fonce); color: var(--blanc); }
+
+.btn-outline { border-color: var(--rouge); color: var(--rouge); background: transparent; }
+.btn-outline:hover { background: var(--rouge); color: var(--blanc); }
+
+.btn-ghost { border-color: rgba(46, 27, 24, 0.25); color: var(--encre); }
+.btn-ghost:hover { border-color: var(--encre); color: var(--encre); }
+
+.btn-lg { padding: 0.9rem 1.9rem; font-size: 1.02rem; }
+.btn-bloc { width: 100%; justify-content: center; }
+
+/* ---------- Bandeau haut ---------- */
+
+.topbar {
+  background: var(--bordeaux); color: var(--creme);
+  text-align: center; font-size: 0.88rem;
+  padding: 0.45rem 1rem;
+}
+.topbar p { margin: 0; }
+.topbar strong { color: var(--blanc); }
+.topbar-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--or); margin-right: 0.4rem; vertical-align: middle;
+}
+
+/* ---------- En-tête ---------- */
+
+.header {
+  position: sticky; top: 0; z-index: 60;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(196, 26, 20, 0.12);
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; padding: 0.6rem 0;
+}
+.brand-logo { height: 62px; width: auto; }
+
+.nav { display: flex; gap: 1.4rem; }
+.nav a {
+  color: var(--encre); text-decoration: none;
+  font-weight: 500; font-size: 0.95rem;
+  padding: 0.3rem 0;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.nav a:hover { color: var(--rouge); border-bottom-color: var(--rouge); }
+
+.header-actions { display: flex; align-items: center; gap: 0.7rem; }
+.btn-tel { font-variant-numeric: tabular-nums; }
+
+.nav-toggle {
+  display: none;
+  flex-direction: column; justify-content: center; gap: 5px;
+  width: 44px; height: 44px;
+  background: none; border: 2px solid var(--rouge); border-radius: 10px;
+  cursor: pointer; padding: 9px;
+}
+.nav-toggle span {
+  display: block; height: 2px; width: 100%;
+  background: var(--rouge); border-radius: 2px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.nav-toggle.ouvert span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.ouvert span:nth-child(2) { opacity: 0; }
+.nav-toggle.ouvert span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ---------- Héro ---------- */
+
+.hero {
+  position: relative;
+  background: linear-gradient(160deg, var(--creme) 0%, var(--blanc) 55%, var(--creme-2) 100%);
+  overflow: hidden;
+}
+.hero-motif {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(196, 26, 20, 0.07) 1.5px, transparent 1.5px);
+  background-size: 26px 26px;
+  mask-image: linear-gradient(to bottom, transparent, black 30%, black 75%, transparent);
+}
+.hero-inner {
+  position: relative;
+  display: grid; grid-template-columns: 1.25fr 0.75fr;
+  gap: 3rem; align-items: center;
+  padding: 4.5rem 0 4rem;
+}
+.hero-lead { font-size: 1.15rem; color: var(--encre-douce); max-width: 34rem; margin-top: 1.2rem; }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 1.8rem; }
+
+.hero-preuves {
+  display: flex; gap: 2.4rem; list-style: none;
+  margin-top: 2.6rem; padding-top: 1.6rem;
+  border-top: 1px solid rgba(196, 26, 20, 0.18);
+}
+.hero-preuves li { display: flex; align-items: center; gap: 0.7rem; }
+.preuve-chiffre {
+  font-family: var(--police-titre); font-weight: 700;
+  font-size: 1.9rem; color: var(--rouge);
+}
+.preuve-label { font-size: 0.82rem; color: var(--encre-douce); line-height: 1.3; }
+
+.hero-cadre {
+  background: var(--blanc);
+  border: 1px solid rgba(196, 26, 20, 0.2);
+  border-radius: 18px;
+  box-shadow: var(--ombre);
+  padding: 2.4rem 2rem;
+  text-align: center;
+  position: relative;
+}
+.hero-cadre::before {
+  content: ""; position: absolute; inset: 9px;
+  border: 1px dashed rgba(196, 26, 20, 0.35);
+  border-radius: 12px; pointer-events: none;
+}
+.hero-vache { width: 96px; margin: 0 auto 1rem; color: var(--rouge); }
+.hero-cadre-titre {
+  font-family: var(--police-titre); font-size: 1.55rem; font-weight: 700;
+  color: var(--bordeaux); margin-bottom: 0.15rem;
+}
+.hero-cadre-sous {
+  font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--rouge); margin-bottom: 0;
+}
+.hero-cadre-sep {
+  width: 54px; height: 2px; background: var(--or);
+  margin: 1.1rem auto;
+}
+.hero-cadre-lieu { font-size: 0.92rem; color: var(--encre-douce); margin: 0; }
+
+/* ---------- Sections ---------- */
+
+.section { padding: 5rem 0; }
+.section-creme { background: var(--creme); }
+.section-tete { max-width: 46rem; margin-bottom: 2.6rem; }
+.section-intro { color: var(--encre-douce); }
+
+.grille-2 {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3.4rem; align-items: start;
+}
+
+/* ---------- La Maison ---------- */
+
+.badges { list-style: none; display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 1.4rem; }
+.badges li {
+  background: var(--creme); color: var(--bordeaux);
+  border: 1px solid rgba(92, 36, 48, 0.22);
+  font-size: 0.84rem; font-weight: 500;
+  padding: 0.35rem 0.85rem; border-radius: 999px;
+}
+
+.maison-cartes {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem;
+}
+.carte-valeur {
+  background: var(--blanc);
+  border: 1px solid rgba(196, 26, 20, 0.14);
+  border-radius: 14px;
+  padding: 1.4rem 1.2rem;
+  box-shadow: 0 4px 14px rgba(67, 26, 36, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.carte-valeur:hover { transform: translateY(-4px); box-shadow: var(--ombre); }
+.carte-valeur:nth-child(even) { transform: translateY(14px); }
+.carte-valeur:nth-child(even):hover { transform: translateY(10px); }
+.carte-valeur-icone {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(196, 26, 20, 0.09); color: var(--rouge);
+  display: grid; place-items: center; margin-bottom: 0.9rem;
+}
+.carte-valeur-icone svg { width: 22px; height: 22px; }
+.carte-valeur h3 { font-size: 1.05rem; margin-bottom: 0.4rem; }
+.carte-valeur p { font-size: 0.92rem; color: var(--encre-douce); margin: 0; }
+
+/* ---------- Savoir-faire ---------- */
+
+.metiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+.metier {
+  background: var(--blanc);
+  border-radius: 16px;
+  padding: 2rem 1.7rem;
+  border: 1px solid rgba(196, 26, 20, 0.12);
+  box-shadow: 0 4px 14px rgba(67, 26, 36, 0.05);
+}
+.metier-accent { border-top: 4px solid var(--rouge); }
+.metier-num {
+  font-family: var(--police-titre); font-size: 2.1rem; font-weight: 700;
+  color: rgba(196, 26, 20, 0.22); margin-bottom: 0.4rem;
+}
+.metier h3 { color: var(--bordeaux); margin-bottom: 0.7rem; }
+.metier p { font-size: 0.95rem; color: var(--encre-douce); }
+.metier ul { list-style: none; margin-top: 1rem; }
+.metier li {
+  padding-left: 1.3rem; position: relative;
+  font-size: 0.92rem; margin-bottom: 0.45rem;
+}
+.metier li::before {
+  content: ""; position: absolute; left: 0; top: 0.52em;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--rouge);
+}
+
+.bandeau-cta {
+  margin-top: 2.8rem;
+  background: var(--bordeaux);
+  color: var(--creme);
+  border-radius: 16px;
+  padding: 1.6rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; flex-wrap: wrap;
+}
+.bandeau-cta p { margin: 0; font-size: 1.05rem; }
+.bandeau-cta strong { color: var(--blanc); }
+
+/* ---------- Réalisations ---------- */
+
+.filtres { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.8rem; }
+.filtre {
+  font-family: var(--police-texte); font-size: 0.9rem; font-weight: 500;
+  padding: 0.5rem 1.1rem; border-radius: 999px;
+  border: 1.5px solid rgba(196, 26, 20, 0.35);
+  background: var(--blanc); color: var(--encre);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.filtre:hover { border-color: var(--rouge); color: var(--rouge); }
+.filtre.actif { background: var(--rouge); border-color: var(--rouge); color: var(--blanc); }
+
+.galerie {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.3rem;
+}
+.galerie-item {
+  border-radius: 14px; overflow: hidden;
+  background: var(--blanc);
+  border: 1px solid rgba(196, 26, 20, 0.12);
+  box-shadow: 0 4px 14px rgba(67, 26, 36, 0.06);
+  cursor: zoom-in;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.25s ease;
+}
+.galerie-item:hover { transform: translateY(-4px); box-shadow: var(--ombre); }
+.galerie-item.cache { display: none; }
+.galerie-item img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.galerie-item figcaption {
+  padding: 0.85rem 1rem 1rem;
+  font-size: 0.93rem; font-weight: 500;
+}
+.galerie-cat {
+  display: block; font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--rouge); margin-bottom: 0.2rem;
+}
+.galerie-note { margin-top: 2rem; text-align: center; color: var(--encre-douce); }
+
+/* ---------- Avis ---------- */
+
+.section-bordeaux {
+  background: linear-gradient(150deg, var(--bordeaux-fonce), var(--bordeaux));
+  color: var(--creme);
+}
+.section-bordeaux h2 { color: var(--blanc); }
+.avis-score { font-size: 1.15rem; color: var(--or); letter-spacing: 0.15em; }
+.avis-score span { color: var(--creme); font-size: 0.95rem; letter-spacing: normal; margin-left: 0.5rem; }
+
+.avis-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+.avis {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 1.8rem 1.6rem;
+  font-size: 0.98rem;
+}
+.avis p { font-style: italic; color: var(--creme); }
+.avis footer { margin-top: 1rem; font-size: 0.86rem; color: var(--or); font-weight: 500; }
+
+/* ---------- Boutiques ---------- */
+
+.boutiques {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem;
+}
+.boutique {
+  background: var(--blanc);
+  border: 1px solid rgba(196, 26, 20, 0.14);
+  border-radius: 16px;
+  padding: 1.9rem 1.7rem;
+  box-shadow: 0 4px 14px rgba(67, 26, 36, 0.06);
+  display: flex; flex-direction: column; gap: 0.9rem;
+}
+.boutique-tete { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.boutique h3 { color: var(--bordeaux); font-size: 1.35rem; }
+.boutique-tag {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  background: var(--creme); color: var(--bordeaux);
+  border: 1px solid rgba(92, 36, 48, 0.25);
+  padding: 0.25rem 0.7rem; border-radius: 999px;
+}
+.boutique-tag-new { background: var(--rouge); border-color: var(--rouge); color: var(--blanc); }
+.boutique address { font-style: normal; color: var(--encre-douce); }
+.boutique-tel {
+  font-family: var(--police-titre); font-size: 1.3rem; font-weight: 700;
+  color: var(--rouge); text-decoration: none;
+}
+.boutique .btn { align-self: flex-start; }
+
+.horaires { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+.horaires th, .horaires td { text-align: left; padding: 0.5rem 0; border-bottom: 1px dashed rgba(196, 26, 20, 0.2); }
+.horaires th { font-weight: 600; color: var(--encre); padding-right: 1rem; white-space: nowrap; }
+.horaires td { color: var(--encre-douce); }
+.horaires .ferme td, .horaires .ferme th { color: #a89490; }
+
+.boutique-carte {
+  grid-column: 1 / -1;
+  border-radius: 16px; overflow: hidden;
+  border: 1px solid rgba(196, 26, 20, 0.14);
+  box-shadow: 0 4px 14px rgba(67, 26, 36, 0.06);
+  background: var(--blanc);
+}
+.boutique-carte iframe { width: 100%; height: 340px; border: 0; display: block; }
+.boutique-carte p { margin: 0; padding: 0.7rem 1rem; font-size: 0.85rem; }
+
+/* ---------- Contact ---------- */
+
+.grille-contact { align-items: stretch; }
+
+.contact-liste { list-style: none; margin: 1.6rem 0; display: grid; gap: 1.1rem; }
+.contact-liste li { display: flex; gap: 0.9rem; align-items: flex-start; }
+.contact-icone {
+  flex: none; width: 42px; height: 42px; border-radius: 12px;
+  background: rgba(196, 26, 20, 0.1); color: var(--rouge);
+  display: grid; place-items: center;
+}
+.contact-note {
+  background: var(--blanc);
+  border-left: 4px solid var(--or);
+  border-radius: 0 12px 12px 0;
+  padding: 1rem 1.2rem;
+  font-size: 0.93rem; color: var(--encre-douce);
+}
+.contact-note strong { color: var(--encre); }
+
+.formulaire {
+  background: var(--blanc);
+  border: 1px solid rgba(196, 26, 20, 0.16);
+  border-radius: 18px;
+  box-shadow: var(--ombre);
+  padding: 2.1rem 1.9rem;
+  display: grid; gap: 1.05rem;
+}
+.formulaire h3 { color: var(--bordeaux); }
+.formulaire label {
+  display: grid; gap: 0.35rem;
+  font-size: 0.9rem; font-weight: 600;
+}
+.optionnel { font-weight: 400; color: var(--encre-douce); }
+.formulaire input, .formulaire select, .formulaire textarea {
+  font-family: var(--police-texte); font-size: 0.98rem;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid rgba(46, 27, 24, 0.2);
+  border-radius: 10px;
+  background: var(--creme);
+  color: var(--encre);
+  transition: border-color 0.15s, background 0.15s;
+}
+.formulaire input:focus, .formulaire select:focus, .formulaire textarea:focus {
+  outline: none; border-color: var(--rouge); background: var(--blanc);
+}
+.formulaire textarea { resize: vertical; }
+.champ-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.formulaire-rgpd { font-size: 0.82rem; color: var(--encre-douce); text-align: center; margin: 0; }
+
+/* ---------- Pied de page ---------- */
+
+.footer { background: var(--encre); color: rgba(250, 244, 234, 0.8); }
+.footer a { color: var(--creme); }
+.footer a:hover { color: var(--blanc); }
+.footer-inner {
+  display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: 2.4rem; padding: 3.2rem 0 2.4rem;
+}
+.footer-logo {
+  height: 64px; width: auto;
+  background: var(--blanc); border-radius: 10px; padding: 6px;
+  margin-bottom: 0.9rem;
+}
+.footer h4 {
+  font-family: var(--police-titre); color: var(--blanc);
+  font-size: 1.05rem; margin-bottom: 0.7rem;
+}
+.footer p { font-size: 0.92rem; }
+.footer-bas {
+  border-top: 1px solid rgba(250, 244, 234, 0.15);
+  text-align: center; font-size: 0.82rem;
+  padding: 1.1rem 0;
+}
+.footer-bas p { margin: 0; }
+
+/* ---------- Bouton d'appel flottant ---------- */
+
+.appel-flottant {
+  display: none;
+  position: fixed; right: 18px; bottom: 18px; z-index: 70;
+  width: 58px; height: 58px; border-radius: 50%;
+  background: var(--rouge); color: var(--blanc);
+  place-items: center;
+  box-shadow: 0 8px 22px rgba(196, 26, 20, 0.45);
+  animation: pulsation 2.4s ease infinite;
+}
+@keyframes pulsation {
+  0%, 100% { box-shadow: 0 8px 22px rgba(196, 26, 20, 0.45); }
+  50% { box-shadow: 0 8px 22px rgba(196, 26, 20, 0.45), 0 0 0 12px rgba(196, 26, 20, 0.12); }
+}
+
+/* ---------- Visionneuse ---------- */
+
+.lightbox[hidden] { display: none; }
+.lightbox {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(46, 27, 24, 0.92);
+  display: grid; place-items: center; place-content: center;
+  gap: 1rem; padding: 2rem;
+}
+.lightbox img {
+  max-width: min(920px, 92vw); max-height: 76vh;
+  border-radius: 12px;
+}
+.lightbox-legende { color: var(--creme); font-size: 1rem; text-align: center; margin: 0; }
+.lightbox-fermer {
+  position: absolute; top: 18px; right: 24px;
+  background: none; border: none; color: var(--creme);
+  font-size: 2.6rem; line-height: 1; cursor: pointer;
+}
+
+/* ---------- Apparition au défilement ---------- */
+
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+  .appel-flottant { animation: none; }
+}
+
+/* ---------- Adaptatif ---------- */
+
+@media (max-width: 1020px) {
+  .nav { display: none; }
+  .nav-toggle { display: flex; }
+  .nav.ouvert {
+    display: flex; flex-direction: column; gap: 0;
+    position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--blanc);
+    border-bottom: 1px solid rgba(196, 26, 20, 0.15);
+    box-shadow: var(--ombre);
+    padding: 0.6rem 0;
+  }
+  .nav.ouvert a { padding: 0.85rem 6%; border-bottom: none; }
+  .btn-tel { display: none; }
+
+  .hero-inner { grid-template-columns: 1fr; padding: 3.2rem 0; }
+  .hero-visuel { max-width: 400px; }
+  .grille-2 { grid-template-columns: 1fr; gap: 2.4rem; }
+  .metiers { grid-template-columns: 1fr; }
+  .avis-grille { grid-template-columns: 1fr; }
+  .galerie { grid-template-columns: 1fr 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .carte-valeur:nth-child(even) { transform: none; }
+  .carte-valeur:nth-child(even):hover { transform: translateY(-4px); }
+}
+
+@media (max-width: 640px) {
+  .section { padding: 3.4rem 0; }
+  .galerie { grid-template-columns: 1fr; }
+  .boutiques { grid-template-columns: 1fr; }
+  .champ-2col { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr; gap: 1.8rem; }
+  .hero-preuves { gap: 1.4rem; flex-wrap: wrap; }
+  .brand-logo { height: 52px; }
+  .appel-flottant { display: grid; }
+  .bandeau-cta { justify-content: center; text-align: center; }
+}
