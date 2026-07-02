@@ -1,0 +1,105 @@
+{
+  "annonce": "Nouveau : retrouvez-nous aussi à La Viennerie — Irai le vendredi & le samedi matin",
+  "coordonnees": {
+    "telLongny": "02 33 73 62 51",
+    "telIrai": "02 33 24 73 43",
+    "email": "lesgourmetsduperche@gmail.com"
+  },
+  "reseaux": {
+    "facebook": "https://www.facebook.com/p/Les-Gourmets-du-Perche-Boucherie-Charcuterie-Traiteur-100070151494470/",
+    "instagram": "",
+    "tiktok": ""
+  },
+  "horaires": {
+    "longny": [
+      { "jours": "Mardi — Vendredi", "heures": "8h00 – 13h00 · 15h00 – 19h00", "ferme": false },
+      { "jours": "Samedi", "heures": "8h00 – 13h00 · 14h00 – 19h00", "ferme": false },
+      { "jours": "Dimanche & Lundi", "heures": "Fermé", "ferme": true }
+    ],
+    "irai": [
+      { "jours": "Vendredi", "heures": "8h30 – 12h30 · 14h00 – 18h00", "ferme": false },
+      { "jours": "Samedi", "heures": "8h30 – 12h30", "ferme": false },
+      { "jours": "Dimanche — Jeudi", "heures": "Fermé", "ferme": true }
+    ]
+  },
+  "avisNote": "5/5 — plus de 40 avis clients",
+  "avis": [
+    {
+      "texte": "Un boudin noir délicieux, une charcuterie superbe… on sent le travail d'artisan à chaque bouchée. La meilleure boucherie du secteur.",
+      "auteur": "Cliente de Longny-au-Perche"
+    },
+    {
+      "texte": "La Maison Brard a assuré le repas de notre mariage : plats raffinés, présentation soignée et un grand professionnalisme. Nos invités en parlent encore !",
+      "auteur": "Mariés du Perche"
+    },
+    {
+      "texte": "Des plateaux de charcuterie magnifiques et généreux pour notre réception. Accueil chaleureux et conseils toujours justes.",
+      "auteur": "Client fidèle"
+    }
+  ],
+  "realisations": [
+    {
+      "image": "assets/realisations/mariage-buffet.svg",
+      "categorie": "mariage",
+      "etiquette": "Mariage",
+      "legende": "Buffet de mariage — 120 convives",
+      "alt": "Buffet de mariage composé par Les Gourmets du Perche"
+    },
+    {
+      "image": "assets/realisations/plateau-charcuterie.svg",
+      "categorie": "plateau",
+      "etiquette": "Plateau",
+      "legende": "Plateau de charcuterie maison",
+      "alt": "Plateau de charcuterie artisanale"
+    },
+    {
+      "image": "assets/realisations/boudin-noir.svg",
+      "categorie": "charcuterie",
+      "etiquette": "Charcuterie",
+      "legende": "Boudin noir, la spécialité maison",
+      "alt": "Boudin noir maison, spécialité de la maison Brard"
+    },
+    {
+      "image": "assets/realisations/cocktail-reception.svg",
+      "categorie": "mariage",
+      "etiquette": "Réception",
+      "legende": "Cocktail apéritif & pièces salées",
+      "alt": "Cocktail apéritif pour réception"
+    },
+    {
+      "image": "assets/realisations/plat-mijote.svg",
+      "categorie": "plat",
+      "etiquette": "Plat cuisiné",
+      "legende": "Mijotés & plats du jour",
+      "alt": "Plat cuisiné mijoté préparé sur place"
+    },
+    {
+      "image": "assets/realisations/terrines.svg",
+      "categorie": "charcuterie",
+      "etiquette": "Charcuterie",
+      "legende": "Terrines & pâtés artisanaux",
+      "alt": "Terrines et pâtés artisanaux"
+    },
+    {
+      "image": "assets/realisations/apero-planches.svg",
+      "categorie": "plateau",
+      "etiquette": "Apéritif",
+      "legende": "Planches apéritives sur mesure",
+      "alt": "Planches apéritives pour vos soirées"
+    },
+    {
+      "image": "assets/realisations/roti-fetes.svg",
+      "categorie": "plat",
+      "etiquette": "Fêtes",
+      "legende": "Pièces de fêtes & rôtis préparés",
+      "alt": "Rôti de fêtes préparé par votre boucher"
+    },
+    {
+      "image": "assets/realisations/buffet-campagnard.svg",
+      "categorie": "mariage",
+      "etiquette": "Réception",
+      "legende": "Buffet campagnard percheron",
+      "alt": "Buffet campagnard pour événement familial"
+    }
+  ]
+}

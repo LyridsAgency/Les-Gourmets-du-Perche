@@ -1,0 +1,233 @@
+/* Administration — Les Gourmets du Perche */
+
+:root {
+  --rouge: #c41a14;
+  --rouge-fonce: #9c130e;
+  --bordeaux: #5c2430;
+  --bordeaux-fonce: #431a24;
+  --creme: #faf4ea;
+  --creme-2: #f2e7d6;
+  --blanc: #ffffff;
+  --encre: #2e1b18;
+  --encre-douce: #6b5550;
+  --or: #c89b5a;
+  --vert: #2e7d4f;
+  --ombre: 0 12px 32px rgba(67, 26, 36, 0.12);
+  --police-titre: "Playfair Display", Georgia, serif;
+  --police-texte: "Jost", "Segoe UI", sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+body {
+  font-family: var(--police-texte);
+  color: var(--encre);
+  background: var(--creme);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+h1, h2, h3 { font-family: var(--police-titre); line-height: 1.2; }
+h2 { font-size: 1.7rem; margin-bottom: 0.3rem; color: var(--bordeaux); }
+h3 { font-size: 1.15rem; margin: 1.6rem 0 0.5rem; color: var(--bordeaux); }
+.sous-titre { color: var(--encre-douce); margin-bottom: 1.4rem; font-size: 0.95rem; }
+
+a { color: var(--rouge); }
+
+/* ---------- Boutons ---------- */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  font-family: var(--police-texte); font-weight: 600; font-size: 0.95rem;
+  padding: 0.65rem 1.4rem; border-radius: 999px;
+  border: 2px solid transparent; cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--rouge); color: var(--blanc); }
+.btn-primary:hover { background: var(--rouge-fonce); }
+.btn-primary:disabled { background: #c99; cursor: wait; }
+.btn-secondaire {
+  background: var(--blanc); color: var(--rouge);
+  border-color: rgba(196, 26, 20, 0.4); margin-top: 0.6rem;
+}
+.btn-secondaire:hover { border-color: var(--rouge); }
+.btn-bloc { width: 100%; }
+
+/* ---------- Connexion ---------- */
+
+.ecran-connexion {
+  min-height: 100vh; display: grid; place-items: center;
+  background: linear-gradient(150deg, var(--creme) 0%, var(--creme-2) 100%);
+  padding: 1.5rem;
+}
+.carte-connexion {
+  background: var(--blanc); border-radius: 18px; box-shadow: var(--ombre);
+  padding: 2.4rem 2.2rem; max-width: 460px; width: 100%;
+  display: grid; gap: 0.9rem;
+}
+.connexion-logo { height: 80px; width: auto; margin: 0 auto; }
+.carte-connexion h1 { font-size: 1.5rem; text-align: center; color: var(--bordeaux); }
+.carte-connexion > p { font-size: 0.93rem; color: var(--encre-douce); text-align: center; }
+.carte-connexion label { font-weight: 600; font-size: 0.9rem; }
+.carte-connexion input {
+  width: 100%; padding: 0.7rem 0.9rem; font-size: 1rem;
+  border: 1.5px solid rgba(46, 27, 24, 0.25); border-radius: 10px;
+  font-family: var(--police-texte);
+}
+.carte-connexion input:focus { outline: none; border-color: var(--rouge); }
+.connexion-erreur { color: var(--rouge); font-size: 0.9rem; text-align: center; }
+.connexion-aide { font-size: 0.88rem; color: var(--encre-douce); }
+.connexion-aide summary { cursor: pointer; color: var(--rouge); font-weight: 500; }
+.connexion-aide ol { margin: 0.6rem 0 0 1.2rem; display: grid; gap: 0.35rem; }
+
+/* ---------- Structure ---------- */
+
+.admin { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+
+.menu-lateral {
+  background: var(--bordeaux-fonce); color: var(--creme);
+  padding: 1.6rem 1.1rem; display: flex; flex-direction: column; gap: 1.4rem;
+  position: sticky; top: 0; height: 100vh;
+}
+.menu-logo {
+  height: 62px; width: auto; align-self: center;
+  background: var(--blanc); border-radius: 10px; padding: 6px;
+}
+.menu-lateral nav { display: grid; gap: 0.3rem; }
+.onglet {
+  text-align: left; font-family: var(--police-texte); font-size: 0.95rem; font-weight: 500;
+  background: none; border: none; color: rgba(250, 244, 234, 0.85);
+  padding: 0.65rem 0.9rem; border-radius: 10px; cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.onglet:hover { background: rgba(255, 255, 255, 0.08); color: var(--blanc); }
+.onglet.actif { background: var(--rouge); color: var(--blanc); }
+.menu-pied { margin-top: auto; display: grid; gap: 0.5rem; font-size: 0.88rem; }
+.menu-pied a { color: var(--or); text-decoration: none; }
+.menu-pied a:hover { text-decoration: underline; }
+.lien-deconnexion {
+  background: none; border: none; color: rgba(250, 244, 234, 0.6);
+  font-family: var(--police-texte); font-size: 0.85rem; cursor: pointer; text-align: left;
+}
+.lien-deconnexion:hover { color: var(--blanc); }
+
+.panneau { padding: 2.4rem 2.6rem 7rem; max-width: 880px; }
+
+.section-admin { display: none; }
+.section-admin.visible { display: block; }
+
+/* ---------- Champs ---------- */
+
+.panneau label { display: grid; gap: 0.3rem; font-weight: 600; font-size: 0.9rem; margin-bottom: 1rem; }
+.panneau input, .panneau textarea, .panneau select {
+  font-family: var(--police-texte); font-size: 0.98rem; font-weight: 400;
+  padding: 0.65rem 0.85rem;
+  border: 1.5px solid rgba(46, 27, 24, 0.22); border-radius: 10px;
+  background: var(--blanc); color: var(--encre); width: 100%;
+}
+.panneau input:focus, .panneau textarea:focus, .panneau select:focus {
+  outline: none; border-color: var(--rouge);
+}
+.panneau textarea { resize: vertical; }
+.grille-champs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* ---------- Tableau de bord ---------- */
+
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.6rem; }
+.stat {
+  background: var(--blanc); border-radius: 14px; padding: 1.2rem 1.3rem;
+  border: 1px solid rgba(196, 26, 20, 0.14);
+}
+.stat-chiffre { font-family: var(--police-titre); font-size: 2rem; font-weight: 700; color: var(--rouge); }
+.stat-label { font-size: 0.86rem; color: var(--encre-douce); }
+.encart {
+  background: var(--blanc); border-left: 4px solid var(--or);
+  border-radius: 0 12px 12px 0; padding: 1.2rem 1.4rem;
+}
+.encart h3 { margin-top: 0; }
+.encart ol { margin-left: 1.2rem; display: grid; gap: 0.4rem; font-size: 0.95rem; }
+
+/* ---------- Horaires ---------- */
+
+.lignes-horaires { display: grid; gap: 0.6rem; }
+.ligne-horaire {
+  display: grid; grid-template-columns: 1fr 1.2fr auto auto; gap: 0.6rem; align-items: center;
+  background: var(--blanc); border: 1px solid rgba(196, 26, 20, 0.14);
+  border-radius: 12px; padding: 0.7rem 0.8rem;
+}
+.ligne-horaire label { margin: 0; }
+.ligne-horaire .case-ferme {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.85rem; font-weight: 500; white-space: nowrap;
+}
+.ligne-horaire input[type="checkbox"] { width: auto; accent-color: var(--rouge); }
+
+/* ---------- Réalisations ---------- */
+
+.liste-realisations, .liste-avis { display: grid; gap: 1rem; }
+.carte-realisation {
+  display: grid; grid-template-columns: 150px 1fr auto; gap: 1.1rem;
+  background: var(--blanc); border: 1px solid rgba(196, 26, 20, 0.14);
+  border-radius: 14px; padding: 1rem;
+}
+.carte-realisation .apercu {
+  width: 150px; height: 112px; object-fit: cover; border-radius: 10px;
+  background: var(--creme-2);
+}
+.carte-realisation .champs { display: grid; gap: 0.5rem; align-content: start; }
+.carte-realisation .champs label { margin: 0; }
+.carte-realisation .ligne-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.carte-realisation .actions { display: grid; gap: 0.3rem; align-content: start; }
+.bouton-icone {
+  background: var(--creme); border: 1px solid rgba(46, 27, 24, 0.15);
+  border-radius: 8px; width: 34px; height: 34px; cursor: pointer;
+  font-size: 0.95rem; color: var(--encre);
+}
+.bouton-icone:hover { border-color: var(--rouge); color: var(--rouge); }
+.bouton-suppr:hover { background: var(--rouge); border-color: var(--rouge); color: var(--blanc); }
+.champ-photo { font-size: 0.82rem; }
+.champ-photo input[type="file"] { padding: 0.4rem; font-size: 0.82rem; }
+
+/* ---------- Avis ---------- */
+
+.carte-avis {
+  display: grid; grid-template-columns: 1fr auto; gap: 1rem;
+  background: var(--blanc); border: 1px solid rgba(196, 26, 20, 0.14);
+  border-radius: 14px; padding: 1rem;
+}
+.carte-avis .champs { display: grid; gap: 0.5rem; }
+.carte-avis label { margin: 0; }
+
+/* ---------- Barre d'enregistrement ---------- */
+
+.barre-enregistrer {
+  position: fixed; bottom: 0; left: 250px; right: 0; z-index: 50;
+  background: var(--blanc); border-top: 1px solid rgba(196, 26, 20, 0.18);
+  padding: 0.9rem 2.6rem;
+  display: flex; align-items: center; justify-content: flex-end; gap: 1.2rem;
+  box-shadow: 0 -6px 18px rgba(67, 26, 36, 0.08);
+}
+.etat { font-size: 0.9rem; color: var(--encre-douce); }
+.etat.succes { color: var(--vert); font-weight: 600; }
+.etat.erreur { color: var(--rouge); font-weight: 600; }
+
+/* ---------- Adaptatif ---------- */
+
+@media (max-width: 900px) {
+  .admin { grid-template-columns: 1fr; }
+  .menu-lateral {
+    position: static; height: auto; flex-direction: column;
+  }
+  .menu-lateral nav { grid-template-columns: 1fr 1fr; }
+  .panneau { padding: 1.6rem 1.2rem 8rem; }
+  .barre-enregistrer { left: 0; padding: 0.9rem 1.2rem; }
+  .grille-champs { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: 1fr; }
+  .carte-realisation { grid-template-columns: 1fr; }
+  .carte-realisation .apercu { width: 100%; height: 160px; }
+  .carte-realisation .actions { grid-auto-flow: column; justify-content: start; }
+  .ligne-horaire { grid-template-columns: 1fr; }
+}

@@ -1,4 +1,6 @@
-/* Les Gourmets du Perche — interactions */
+/* Les Gourmets du Perche — interactions
+   Les éléments de la galerie et des avis pouvant être reconstruits par
+   js/contenu.js, les écouteurs utilisent la délégation d'événements. */
 (function () {
   "use strict";
 
@@ -22,20 +24,19 @@
   }
 
   /* ----- Filtres de la galerie ----- */
-  var filtres = document.querySelectorAll(".filtre");
-  var items = document.querySelectorAll(".galerie-item");
-  filtres.forEach(function (btn) {
+  document.querySelectorAll(".filtre").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      filtres.forEach(function (b) { b.classList.remove("actif"); });
+      document.querySelectorAll(".filtre").forEach(function (b) { b.classList.remove("actif"); });
       btn.classList.add("actif");
       var cat = btn.dataset.filtre;
-      items.forEach(function (item) {
+      document.querySelectorAll(".galerie-item").forEach(function (item) {
         item.classList.toggle("cache", cat !== "tous" && item.dataset.cat !== cat);
       });
     });
   });
 
-  /* ----- Visionneuse d'images ----- */
+  /* ----- Visionneuse d'images (déléguée sur la galerie) ----- */
+  var galerie = document.getElementById("galerie");
   var lightbox = document.getElementById("lightbox");
   var lightboxImg = document.getElementById("lightboxImg");
   var lightboxLegende = document.getElementById("lightboxLegende");
@@ -46,17 +47,17 @@
     document.body.style.overflow = "";
   }
 
-  if (lightbox) {
-    items.forEach(function (item) {
-      item.addEventListener("click", function () {
-        var img = item.querySelector("img");
-        var legende = item.querySelector("figcaption");
-        lightboxImg.src = img.src;
-        lightboxImg.alt = img.alt;
-        lightboxLegende.textContent = legende ? legende.textContent : "";
-        lightbox.hidden = false;
-        document.body.style.overflow = "hidden";
-      });
+  if (galerie && lightbox) {
+    galerie.addEventListener("click", function (e) {
+      var item = e.target.closest(".galerie-item");
+      if (!item) return;
+      var img = item.querySelector("img");
+      var legende = item.querySelector("figcaption");
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightboxLegende.textContent = legende ? legende.textContent : "";
+      lightbox.hidden = false;
+      document.body.style.overflow = "hidden";
     });
     lightboxFermer.addEventListener("click", fermerLightbox);
     lightbox.addEventListener("click", function (e) {

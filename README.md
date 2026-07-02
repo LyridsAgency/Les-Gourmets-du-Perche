@@ -26,6 +26,34 @@ conçu aux couleurs du logo de la maison.
 | Boutiques | Adresses, horaires et itinéraires de Longny-au-Perche et Irai + carte |
 | Contact | Formulaire de devis, téléphone cliquable, e-mail, Facebook |
 
+## Administration (`/admin`)
+
+Le site embarque un **tableau de bord d'administration** (`admin/index.html`) qui permet au
+commerçant de tout modifier sans toucher au code :
+
+- **Bandeau d'annonce** en haut du site (nouveautés, fermetures, offres de fêtes…)
+- **Coordonnées** : téléphones des deux boutiques, e-mail
+- **Réseaux sociaux** : Facebook, Instagram, TikTok (un champ vide masque le réseau sur le site)
+- **Horaires** des deux boutiques (lignes libres + case « Fermé »)
+- **Réalisations** : ajout de photos, légende, catégorie, réordonnancement, suppression
+- **Avis clients** : ajout/suppression de témoignages et note globale
+
+### Fonctionnement
+
+Aucun serveur : le contenu éditable vit dans `content.json` (chargé par `js/contenu.js` sur le
+site public) et l'admin enregistre directement dans le dépôt GitHub via son API. Chaque
+« Enregistrer » crée un commit ; l'hébergement statique (GitHub Pages, Netlify…) republie le
+site en une à deux minutes.
+
+### Accès
+
+L'admin demande une **clé d'accès** : un *fine-grained personal access token* GitHub limité à
+ce dépôt avec la seule permission **Contents : Read and write**
+(GitHub → Settings → Developer settings → Fine-grained tokens). La clé reste stockée dans le
+navigateur du commerçant. Le dépôt cible est configuré en tête de `admin/admin.js`
+(`DEPOT.proprietaire` / `DEPOT.repo`) ; la branche par défaut du dépôt est détectée
+automatiquement.
+
 ## Mise en relation avec les clients
 
 - **Formulaire de devis** : branché sur [FormSubmit](https://formsubmit.co)

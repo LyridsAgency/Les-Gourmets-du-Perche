@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration — Les Gourmets du Perche</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="../assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- ===== Écran de connexion ===== -->
+  <div class="ecran-connexion" id="ecranConnexion">
+    <div class="carte-connexion">
+      <img src="../assets/img/logo.png" alt="Les Gourmets du Perche" class="connexion-logo">
+      <h1>Espace d'administration</h1>
+      <p>Gérez le contenu de votre site : annonce, horaires, coordonnées, réseaux sociaux, réalisations et avis.</p>
+      <label for="champToken">Clé d'accès (jeton GitHub)</label>
+      <input type="password" id="champToken" placeholder="github_pat_…" autocomplete="off">
+      <button class="btn btn-primary btn-bloc" id="btnConnexion">Se connecter</button>
+      <p class="connexion-erreur" id="connexionErreur" hidden></p>
+      <details class="connexion-aide">
+        <summary>Comment obtenir ma clé d'accès&nbsp;?</summary>
+        <ol>
+          <li>Connectez-vous à GitHub puis ouvrez <em>Settings → Developer settings → Fine-grained personal access tokens → Generate new token</em>.</li>
+          <li>Dans <em>Repository access</em>, choisissez <em>Only select repositories</em> et sélectionnez le dépôt du site.</li>
+          <li>Dans <em>Permissions → Repository permissions</em>, passez <strong>Contents</strong> à <strong>Read and write</strong>.</li>
+          <li>Générez le jeton et collez-le ci-dessus. Il reste enregistré uniquement dans ce navigateur.</li>
+        </ol>
+      </details>
+    </div>
+  </div>
+
+  <!-- ===== Tableau de bord ===== -->
+  <div class="admin" id="admin" hidden>
+    <aside class="menu-lateral">
+      <img src="../assets/img/logo.png" alt="Les Gourmets du Perche" class="menu-logo">
+      <nav>
+        <button class="onglet actif" data-section="tableau">Tableau de bord</button>
+        <button class="onglet" data-section="annonce">Bandeau d'annonce</button>
+        <button class="onglet" data-section="coordonnees">Coordonnées &amp; réseaux</button>
+        <button class="onglet" data-section="horaires">Horaires</button>
+        <button class="onglet" data-section="realisations">Réalisations</button>
+        <button class="onglet" data-section="avis">Avis clients</button>
+      </nav>
+      <div class="menu-pied">
+        <a href="../index.html" target="_blank" rel="noopener">Voir le site ↗</a>
+        <button class="lien-deconnexion" id="btnDeconnexion">Se déconnecter</button>
+      </div>
+    </aside>
+
+    <main class="panneau">
+      <!-- Tableau de bord -->
+      <section class="section-admin visible" id="section-tableau">
+        <h2>Bonjour 👋</h2>
+        <p class="sous-titre">Bienvenue dans l'espace de gestion des Gourmets du Perche.</p>
+        <div class="stats" id="stats"></div>
+        <div class="encart">
+          <h3>Comment ça marche&nbsp;?</h3>
+          <ol>
+            <li>Modifiez vos contenus dans les rubriques du menu de gauche.</li>
+            <li>Cliquez sur <strong>Enregistrer les modifications</strong> en bas de page.</li>
+            <li>Le site est mis à jour automatiquement en une à deux minutes.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Annonce -->
+      <section class="section-admin" id="section-annonce">
+        <h2>Bandeau d'annonce</h2>
+        <p class="sous-titre">Le message affiché tout en haut du site (nouveautés, fermetures exceptionnelles, offres de fêtes…).</p>
+        <label>Texte de l'annonce
+          <textarea id="champAnnonce" rows="3"></textarea>
+        </label>
+      </section>
+
+      <!-- Coordonnées & réseaux -->
+      <section class="section-admin" id="section-coordonnees">
+        <h2>Coordonnées &amp; réseaux sociaux</h2>
+        <p class="sous-titre">Ces informations sont reprises partout sur le site (en-tête, contact, pied de page).</p>
+        <div class="grille-champs">
+          <label>Téléphone — Longny-au-Perche
+            <input type="tel" id="champTelLongny">
+          </label>
+          <label>Téléphone — Irai (La Viennerie)
+            <input type="tel" id="champTelIrai">
+          </label>
+        </div>
+        <label>Adresse e-mail
+          <input type="email" id="champEmail">
+        </label>
+        <h3>Réseaux sociaux</h3>
+        <p class="sous-titre">Laissez un champ vide pour masquer le réseau sur le site.</p>
+        <label>Page Facebook (adresse complète)
+          <input type="url" id="champFacebook" placeholder="https://www.facebook.com/…">
+        </label>
+        <label>Compte Instagram (adresse complète)
+          <input type="url" id="champInstagram" placeholder="https://www.instagram.com/…">
+        </label>
+        <label>Compte TikTok (adresse complète)
+          <input type="url" id="champTiktok" placeholder="https://www.tiktok.com/@…">
+        </label>
+      </section>
+
+      <!-- Horaires -->
+      <section class="section-admin" id="section-horaires">
+        <h2>Horaires d'ouverture</h2>
+        <p class="sous-titre">Une ligne par groupe de jours. Cochez «&nbsp;Fermé&nbsp;» pour un jour de fermeture.</p>
+        <h3>Boutique de Longny-au-Perche</h3>
+        <div class="lignes-horaires" id="horairesLongny"></div>
+        <button class="btn btn-secondaire" data-ajout-horaire="longny">+ Ajouter une ligne</button>
+        <h3>Boutique d'Irai — La Viennerie</h3>
+        <div class="lignes-horaires" id="horairesIrai"></div>
+        <button class="btn btn-secondaire" data-ajout-horaire="irai">+ Ajouter une ligne</button>
+      </section>
+
+      <!-- Réalisations -->
+      <section class="section-admin" id="section-realisations">
+        <h2>Réalisations</h2>
+        <p class="sous-titre">
+          Les photos de la galerie «&nbsp;Nos réalisations&nbsp;». Ajoutez vos photos (format paysage conseillé),
+          choisissez une catégorie et une légende. Utilisez les flèches pour changer l'ordre.
+        </p>
+        <div class="liste-realisations" id="listeRealisations"></div>
+        <button class="btn btn-secondaire" id="btnAjoutRealisation">+ Ajouter une réalisation</button>
+      </section>
+
+      <!-- Avis -->
+      <section class="section-admin" id="section-avis">
+        <h2>Avis clients</h2>
+        <p class="sous-titre">Les témoignages affichés sur le site.</p>
+        <label>Texte de la note globale
+          <input type="text" id="champAvisNote" placeholder="5/5 — plus de 40 avis clients">
+        </label>
+        <div class="liste-avis" id="listeAvis"></div>
+        <button class="btn btn-secondaire" id="btnAjoutAvis">+ Ajouter un avis</button>
+      </section>
+    </main>
+
+    <!-- Barre d'enregistrement -->
+    <div class="barre-enregistrer">
+      <span class="etat" id="etatEnregistrement"></span>
+      <button class="btn btn-primary" id="btnEnregistrer">Enregistrer les modifications</button>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

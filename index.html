@@ -45,7 +45,7 @@
 
   <!-- ===== Bandeau d'annonce ===== -->
   <div class="topbar">
-    <p><span class="topbar-dot" aria-hidden="true"></span> Nouveau&nbsp;: retrouvez-nous aussi à <strong>La Viennerie — Irai</strong> le vendredi &amp; le samedi matin</p>
+    <p><span class="topbar-dot" aria-hidden="true"></span> <span id="topbarTexte">Nouveau&nbsp;: retrouvez-nous aussi à <strong>La Viennerie — Irai</strong> le vendredi &amp; le samedi matin</span></p>
   </div>
 
   <!-- ===== En-tête ===== -->
@@ -63,7 +63,7 @@
         <a href="#contact">Contact</a>
       </nav>
       <div class="header-actions">
-        <a href="tel:+33233736251" class="btn btn-outline btn-tel">
+        <a href="tel:+33233736251" class="btn btn-outline btn-tel" data-tel="longny">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           02 33 73 62 51
         </a>
@@ -319,9 +319,9 @@
         <div class="section-tete reveal">
           <p class="surtitre surtitre-clair">Ils nous font confiance</p>
           <h2>La parole à nos clients</h2>
-          <p class="avis-score">★★★★★ <span>5/5 — plus de 40 avis clients</span></p>
+          <p class="avis-score">★★★★★ <span id="avisNote">5/5 — plus de 40 avis clients</span></p>
         </div>
-        <div class="avis-grille reveal">
+        <div class="avis-grille reveal" id="avisGrille">
           <blockquote class="avis">
             <p>«&nbsp;Un boudin noir délicieux, une charcuterie superbe&hellip; on sent le travail
             d'artisan à chaque bouchée. La meilleure boucherie du secteur.&nbsp;»</p>
@@ -358,12 +358,14 @@
               11 place de l'Hôtel de Ville<br>
               61290 Longny-les-Villages
             </address>
-            <a class="boutique-tel" href="tel:+33233736251">02 33 73 62 51</a>
+            <a class="boutique-tel" href="tel:+33233736251" data-tel="longny">02 33 73 62 51</a>
             <table class="horaires">
               <caption class="visually-hidden">Horaires d'ouverture — Longny-au-Perche</caption>
-              <tr><th>Mardi — Vendredi</th><td>8h00 – 13h00 · 15h00 – 19h00</td></tr>
-              <tr><th>Samedi</th><td>8h00 – 13h00 · 14h00 – 19h00</td></tr>
-              <tr class="ferme"><th>Dimanche &amp; Lundi</th><td>Fermé</td></tr>
+              <tbody id="horairesLongny">
+                <tr><th>Mardi — Vendredi</th><td>8h00 – 13h00 · 15h00 – 19h00</td></tr>
+                <tr><th>Samedi</th><td>8h00 – 13h00 · 14h00 – 19h00</td></tr>
+                <tr class="ferme"><th>Dimanche &amp; Lundi</th><td>Fermé</td></tr>
+              </tbody>
             </table>
             <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=Les+Gourmets+du+Perche+11+place+de+l'H%C3%B4tel+de+Ville+61290+Longny-au-Perche" target="_blank" rel="noopener">Itinéraire</a>
           </article>
@@ -376,12 +378,14 @@
               La Viennerie<br>
               61190 Irai
             </address>
-            <a class="boutique-tel" href="tel:+33233247343">02 33 24 73 43</a>
+            <a class="boutique-tel" href="tel:+33233247343" data-tel="irai">02 33 24 73 43</a>
             <table class="horaires">
               <caption class="visually-hidden">Horaires d'ouverture — Irai La Viennerie</caption>
-              <tr><th>Vendredi</th><td>8h30 – 12h30 · 14h00 – 18h00</td></tr>
-              <tr><th>Samedi</th><td>8h30 – 12h30</td></tr>
-              <tr class="ferme"><th>Dimanche — Jeudi</th><td>Fermé</td></tr>
+              <tbody id="horairesIrai">
+                <tr><th>Vendredi</th><td>8h30 – 12h30 · 14h00 – 18h00</td></tr>
+                <tr><th>Samedi</th><td>8h30 – 12h30</td></tr>
+                <tr class="ferme"><th>Dimanche — Jeudi</th><td>Fermé</td></tr>
+              </tbody>
             </table>
             <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=La+Viennerie+61190+Irai" target="_blank" rel="noopener">Itinéraire</a>
           </article>
@@ -414,8 +418,8 @@
               </span>
               <div>
                 <strong>Par téléphone</strong><br>
-                <a href="tel:+33233736251">02 33 73 62 51</a> (Longny) ·
-                <a href="tel:+33233247343">02 33 24 73 43</a> (Irai)
+                <a href="tel:+33233736251" data-tel="longny">02 33 73 62 51</a> (Longny) ·
+                <a href="tel:+33233247343" data-tel="irai">02 33 24 73 43</a> (Irai)
               </div>
             </li>
             <li>
@@ -424,7 +428,7 @@
               </span>
               <div>
                 <strong>Par e-mail</strong><br>
-                <a href="mailto:lesgourmetsduperche@gmail.com">lesgourmetsduperche@gmail.com</a>
+                <a href="mailto:lesgourmetsduperche@gmail.com" data-email>lesgourmetsduperche@gmail.com</a>
               </div>
             </li>
             <li>
@@ -433,7 +437,16 @@
               </span>
               <div>
                 <strong>Sur Facebook</strong><br>
-                <a href="https://www.facebook.com/p/Les-Gourmets-du-Perche-Boucherie-Charcuterie-Traiteur-100070151494470/" target="_blank" rel="noopener">Les Gourmets du Perche — actualités &amp; nouveautés</a>
+                <a href="https://www.facebook.com/p/Les-Gourmets-du-Perche-Boucherie-Charcuterie-Traiteur-100070151494470/" target="_blank" rel="noopener" data-reseau="facebook">Les Gourmets du Perche — actualités &amp; nouveautés</a>
+              </div>
+            </li>
+            <li hidden>
+              <span class="contact-icone" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+              </span>
+              <div>
+                <strong>Sur Instagram</strong><br>
+                <a href="#" target="_blank" rel="noopener" data-reseau="instagram">Nos réalisations en photos</a>
               </div>
             </li>
           </ul>
@@ -500,22 +513,24 @@
       </div>
       <div class="footer-col">
         <h4>Longny-au-Perche</h4>
-        <p>11 place de l'Hôtel de Ville<br>61290 Longny-les-Villages<br><a href="tel:+33233736251">02 33 73 62 51</a></p>
+        <p>11 place de l'Hôtel de Ville<br>61290 Longny-les-Villages<br><a href="tel:+33233736251" data-tel="longny">02 33 73 62 51</a></p>
       </div>
       <div class="footer-col">
         <h4>Irai — La Viennerie</h4>
-        <p>La Viennerie<br>61190 Irai<br><a href="tel:+33233247343">02 33 24 73 43</a></p>
+        <p>La Viennerie<br>61190 Irai<br><a href="tel:+33233247343" data-tel="irai">02 33 24 73 43</a></p>
       </div>
       <div class="footer-col">
         <h4>Suivez-nous</h4>
-        <p>
-          <a href="https://www.facebook.com/p/Les-Gourmets-du-Perche-Boucherie-Charcuterie-Traiteur-100070151494470/" target="_blank" rel="noopener">Facebook</a><br>
-          <a href="mailto:lesgourmetsduperche@gmail.com">lesgourmetsduperche@gmail.com</a>
-        </p>
+        <ul class="footer-reseaux">
+          <li><a href="https://www.facebook.com/p/Les-Gourmets-du-Perche-Boucherie-Charcuterie-Traiteur-100070151494470/" target="_blank" rel="noopener" data-reseau="facebook">Facebook</a></li>
+          <li hidden><a href="#" target="_blank" rel="noopener" data-reseau="instagram">Instagram</a></li>
+          <li hidden><a href="#" target="_blank" rel="noopener" data-reseau="tiktok">TikTok</a></li>
+          <li><a href="mailto:lesgourmetsduperche@gmail.com" data-email>lesgourmetsduperche@gmail.com</a></li>
+        </ul>
       </div>
     </div>
     <div class="footer-bas">
-      <p>© <span id="annee">2026</span> Les Gourmets du Perche — Maison Brard. Tous droits réservés.</p>
+      <p>© <span id="annee">2026</span> Les Gourmets du Perche — Maison Brard. Tous droits réservés. · <a href="admin/" class="lien-admin">Administration</a></p>
     </div>
   </footer>
 
@@ -531,6 +546,7 @@
     <p class="lightbox-legende" id="lightboxLegende"></p>
   </div>
 
+  <script src="js/contenu.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
