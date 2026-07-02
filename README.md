@@ -107,9 +107,30 @@ sur `main` — y compris ceux créés par l'administration — republie le site 
 1. Fusionner la branche de travail dans `main`.
 2. Dans GitHub : **Settings → Pages → Source : GitHub Actions**.
    (Sur un compte gratuit, le dépôt doit être **public** pour utiliser Pages.)
-3. Le site est servi sur `https://<compte>.github.io/Les-Gourmets-du-Perche/` ;
-   pour un domaine personnalisé (ex. `lesgourmetsduperche.fr`), l'ajouter dans
-   **Settings → Pages → Custom domain** et créer l'enregistrement DNS indiqué.
+3. Le site est servi sur `https://<compte>.github.io/Les-Gourmets-du-Perche/`.
+
+### Domaine personnalisé (ex. `lesgourmetsduperche.fr`)
+
+1. **Acheter le domaine** chez un registrar français (OVH, Gandi, Ionos… ~10 €/an).
+2. **Chez le registrar**, dans la zone DNS du domaine, créer :
+
+   | Type | Nom | Valeur |
+   |---|---|---|
+   | A | `@` | `185.199.108.153` |
+   | A | `@` | `185.199.109.153` |
+   | A | `@` | `185.199.110.153` |
+   | A | `@` | `185.199.111.153` |
+   | CNAME | `www` | `<compte>.github.io.` |
+
+3. **Dans GitHub** : Settings → Pages → **Custom domain** → saisir `lesgourmetsduperche.fr`
+   → Save, puis cocher **Enforce HTTPS** une fois la vérification passée (quelques minutes
+   à quelques heures, le temps de la propagation DNS). Le certificat HTTPS est généré
+   automatiquement et gratuitement.
+4. Le site répond alors sur `https://lesgourmetsduperche.fr` (le chemin
+   `/Les-Gourmets-du-Perche/` disparaît — les liens du site étant relatifs, rien à changer).
+
+En pratique, c'est une opération à faire **une fois, par l'agence, lors de la remise** :
+le client n'a ensuite plus qu'à payer le renouvellement annuel du domaine chez le registrar.
 
 ### Vendre / transférer le site au commerçant
 
