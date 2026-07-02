@@ -210,6 +210,22 @@ a { color: var(--rouge); }
 #section-securite .encart { margin-top: 2rem; }
 #section-securite .encart .btn { margin-top: 1rem; }
 
+/* ---------- Avis Google ---------- */
+
+.encart-google { margin-bottom: 2rem; }
+.encart-google label { margin-top: 0.9rem; }
+.case-auto {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-weight: 600; cursor: pointer;
+}
+.case-auto input[type="checkbox"] { width: auto; accent-color: var(--rouge); }
+.encart-google code {
+  background: var(--creme-2); padding: 0.05rem 0.35rem; border-radius: 4px; font-size: 0.9em;
+}
+.etat-avis-google { font-size: 0.9rem; margin-top: 0.9rem; color: var(--encre-douce); }
+.etat-avis-google.succes { color: var(--vert); font-weight: 600; }
+.etat-avis-google.erreur { color: var(--rouge); font-weight: 600; }
+
 /* ---------- Barre d'enregistrement ---------- */
 
 .barre-enregistrer {

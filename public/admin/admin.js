@@ -135,11 +135,57 @@
 
     // Avis
     $("champAvisNote").value = contenu.avisNote || "";
+    $("champAvisAutoActif").checked = !!(contenu.avisAuto && contenu.avisAuto.actif);
+    $("champAvisPlaceId").value = (contenu.avisAuto && contenu.avisAuto.placeId) || "";
     $("listeAvis").innerHTML = "";
     contenu.avis.forEach(function (a) {
       $("listeAvis").appendChild(carteAvis(a));
     });
+    rafraichirEtatAvisGoogle();
   }
+
+  /* ----- Avis Google ----- */
+
+  function formaterDate(ms) {
+    try { return new Date(ms).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); }
+    catch (e) { return ""; }
+  }
+
+  function rafraichirEtatAvisGoogle() {
+    var etat = $("etatAvisGoogle");
+    api("/api/admin/avis-google").then(function (s) {
+      if (!s.configureServeur) {
+        etat.className = "etat-avis-google info";
+        etat.textContent = "La synchronisation Google n'est pas encore activée sur le serveur (clé API à configurer par votre prestataire). Les avis manuels sont utilisés en attendant.";
+      } else if (s.cache) {
+        etat.className = "etat-avis-google succes";
+        etat.textContent = "✓ Dernière synchronisation le " + formaterDate(s.cache.maj) +
+          " — note " + String(s.cache.note).replace(".", ",") + "/5, " + s.cache.total + " avis (" + s.cache.nb + " commentaires affichés).";
+      } else {
+        etat.className = "etat-avis-google info";
+        etat.textContent = "Prêt : renseignez l'identifiant du lieu, enregistrez, puis cliquez sur « Synchroniser maintenant ».";
+      }
+    }).catch(function () { /* silencieux */ });
+  }
+
+  $("btnSyncAvis").addEventListener("click", function () {
+    var bouton = $("btnSyncAvis");
+    var etat = $("etatAvisGoogle");
+    bouton.disabled = true;
+    etat.className = "etat-avis-google";
+    etat.textContent = "Synchronisation en cours…";
+    api("/api/admin/avis-google/rafraichir", { method: "POST" })
+      .then(function (r) {
+        etat.className = "etat-avis-google succes";
+        etat.textContent = "✓ " + r.total + " avis Google récupérés (note " +
+          String(r.note).replace(".", ",") + "/5). Ils s'affichent maintenant sur le site.";
+      })
+      .catch(function (e) {
+        etat.className = "etat-avis-google erreur";
+        etat.textContent = "Erreur : " + e.message;
+      })
+      .then(function () { bouton.disabled = false; });
+  });
 
   /* ----- Horaires ----- */
 
@@ -418,6 +464,10 @@
       irai: lireHoraires("horairesIrai")
     };
     contenu.avisNote = $("champAvisNote").value.trim();
+    contenu.avisAuto = {
+      actif: $("champAvisAutoActif").checked,
+      placeId: $("champAvisPlaceId").value.trim()
+    };
     contenu.avis = lireAvis();
     contenu.realisations = lireRealisations();
 

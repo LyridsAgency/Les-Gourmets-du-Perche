@@ -24,6 +24,13 @@ const GRAINE_CONTENU = path.join(__dirname, "content.json");
 const ITERATIONS_MDP = 150000;
 const DUREE_SESSION = 8 * 60 * 60 * 1000; // 8 heures
 
+// Avis Google (facultatif) : renseigner GOOGLE_API_KEY pour activer la
+// synchronisation automatique. Sans clé, le site utilise les avis manuels.
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || "";
+const GOOGLE_PLACES_BASE = process.env.GOOGLE_PLACES_BASE || "https://places.googleapis.com/v1/places";
+const FICHIER_AVIS_GOOGLE = path.join(DATA_DIR, "avis-google.json");
+const FRAICHEUR_AVIS = 12 * 60 * 60 * 1000; // rafraîchit au plus toutes les 12 h
+
 /* ---------- Données ---------- */
 
 fs.mkdirSync(DOSSIER_UPLOADS, { recursive: true });
@@ -53,6 +60,69 @@ async function verifierMotDePasse(motDePasse, securite) {
   const calculee = await empreinte(String(motDePasse), securite.sel, securite.iterations);
   const attendue = Buffer.from(securite.hash, "hex");
   return calculee.length === attendue.length && crypto.timingSafeEqual(calculee, attendue);
+}
+
+/* ---------- Avis Google (synchronisation automatique) ---------- */
+
+function lireCacheAvisGoogle() {
+  try { return JSON.parse(fs.readFileSync(FICHIER_AVIS_GOOGLE, "utf8")); }
+  catch (e) { return null; }
+}
+
+/* Interroge l'API Google Places pour la note, le nombre d'avis et les
+   derniers commentaires ; met le résultat en cache dans DATA_DIR. */
+async function rafraichirAvisGoogle(placeId) {
+  if (!GOOGLE_API_KEY || !placeId) return null;
+  const controleur = new AbortController();
+  const minuteur = setTimeout(() => controleur.abort(), 8000);
+  try {
+    const reponse = await fetch(
+      GOOGLE_PLACES_BASE + "/" + encodeURIComponent(placeId) + "?languageCode=fr",
+      {
+        headers: {
+          "X-Goog-Api-Key": GOOGLE_API_KEY,
+          "X-Goog-FieldMask": "rating,userRatingCount,reviews"
+        },
+        signal: controleur.signal
+      }
+    );
+    if (!reponse.ok) throw new Error("Google a répondu " + reponse.status);
+    const donnees = await reponse.json();
+    const avis = (Array.isArray(donnees.reviews) ? donnees.reviews : [])
+      .map((a) => ({
+        texte: chaine(a && a.text && a.text.text, 600),
+        auteur: chaine(a && a.authorAttribution && a.authorAttribution.displayName, 120)
+      }))
+      .filter((a) => a.texte)
+      .slice(0, 6);
+    const total = Number(donnees.userRatingCount) || 0;
+    const note = Number(donnees.rating) || 0;
+    const cache = {
+      note,
+      total,
+      noteTexte: note ? note.toFixed(1).replace(".", ",") + "/5 — " + total + " avis Google" : "",
+      avis,
+      maj: Date.now()
+    };
+    fs.writeFileSync(FICHIER_AVIS_GOOGLE, JSON.stringify(cache, null, 2));
+    return cache;
+  } finally {
+    clearTimeout(minuteur);
+  }
+}
+
+async function synchroniserAvisSiNecessaire() {
+  try {
+    const contenu = lireContenu();
+    const auto = contenu.avisAuto;
+    if (!GOOGLE_API_KEY || !auto || !auto.actif || !auto.placeId) return;
+    const cache = lireCacheAvisGoogle();
+    if (cache && Date.now() - cache.maj < FRAICHEUR_AVIS) return;
+    await rafraichirAvisGoogle(auto.placeId);
+    console.log("Avis Google synchronisés.");
+  } catch (e) {
+    console.error("Synchronisation des avis Google impossible :", e.message);
+  }
 }
 
 /* ---------- Limitation des tentatives de connexion ---------- */
@@ -117,6 +187,10 @@ function assainirContenu(recu, securiteExistante) {
       irai: horaires(c.horaires && c.horaires.irai)
     },
     avisNote: chaine(c.avisNote, 120),
+    avisAuto: {
+      actif: !!(c.avisAuto && c.avisAuto.actif),
+      placeId: chaine(c.avisAuto && c.avisAuto.placeId, 200)
+    },
     avis: (Array.isArray(c.avis) ? c.avis : []).slice(0, 30).map((a) => ({
       texte: chaine(a && a.texte, 600),
       auteur: chaine(a && a.auteur, 120)
@@ -262,11 +336,53 @@ app.post("/api/admin/mot-de-passe", exigerConnexion, async (req, res, next) => {
   } catch (erreur) { next(erreur); }
 });
 
+app.get("/api/admin/avis-google", exigerConnexion, (req, res) => {
+  const contenu = lireContenu();
+  const cache = lireCacheAvisGoogle();
+  res.json({
+    configureServeur: !!GOOGLE_API_KEY,
+    actif: !!(contenu.avisAuto && contenu.avisAuto.actif),
+    placeId: (contenu.avisAuto && contenu.avisAuto.placeId) || "",
+    cache: cache ? { note: cache.note, total: cache.total, nb: cache.avis.length, maj: cache.maj } : null
+  });
+});
+
+app.post("/api/admin/avis-google/rafraichir", exigerConnexion, async (req, res) => {
+  try {
+    const contenu = lireContenu();
+    const placeId = contenu.avisAuto && contenu.avisAuto.placeId;
+    if (!GOOGLE_API_KEY) {
+      return res.status(400).json({ erreur: "La clé Google n'est pas configurée sur le serveur. Contactez votre prestataire." });
+    }
+    if (!placeId) {
+      return res.status(400).json({ erreur: "Renseignez et enregistrez d'abord l'identifiant du lieu (Place ID)." });
+    }
+    const cache = await rafraichirAvisGoogle(placeId);
+    if (!cache || !cache.avis.length) {
+      return res.status(502).json({ erreur: "Aucun avis récupéré. Vérifiez l'identifiant du lieu." });
+    }
+    res.json({ note: cache.note, total: cache.total, nb: cache.avis.length, maj: cache.maj });
+  } catch (erreur) {
+    res.status(502).json({ erreur: "Synchronisation impossible : " + erreur.message });
+  }
+});
+
 /* ---------- Contenu public & fichiers ---------- */
 
 app.get("/content.json", (req, res) => {
   const contenu = lireContenu();
   delete contenu.securite; // rien de sensible n'est publié
+  // Si la synchronisation Google est active, les avis récupérés remplacent
+  // les avis manuels (repli automatique sur le manuel si le cache est vide).
+  if (contenu.avisAuto && contenu.avisAuto.actif) {
+    const cache = lireCacheAvisGoogle();
+    if (cache && Array.isArray(cache.avis) && cache.avis.length) {
+      if (cache.noteTexte) contenu.avisNote = cache.noteTexte;
+      contenu.avis = cache.avis.map((a) => ({ texte: a.texte, auteur: a.auteur }));
+    }
+    synchroniserAvisSiNecessaire(); // rafraîchit en arrière-plan si nécessaire
+  }
+  delete contenu.avisAuto; // configuration interne, inutile côté public
   res.set("Cache-Control", "no-cache");
   res.json(contenu);
 });
@@ -295,4 +411,7 @@ app.use((erreur, req, res, next) => {
 app.listen(PORT, () => {
   console.log("Les Gourmets du Perche — serveur démarré sur le port " + PORT);
   console.log("Données : " + DATA_DIR);
+  console.log("Avis Google : " + (GOOGLE_API_KEY ? "synchronisation disponible" : "manuel (clé non configurée)"));
+  synchroniserAvisSiNecessaire();
+  setInterval(synchroniserAvisSiNecessaire, 60 * 60 * 1000).unref();
 });

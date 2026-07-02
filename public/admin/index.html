@@ -126,6 +126,34 @@
       <section class="section-admin" id="section-avis">
         <h2>Avis clients</h2>
         <p class="sous-titre">Les témoignages affichés sur le site.</p>
+
+        <div class="encart encart-google">
+          <h3>Avis Google automatiques</h3>
+          <p>Reliez votre fiche Google&nbsp;: la note, le nombre d'avis et vos derniers
+          commentaires s'affichent alors <strong>tout seuls</strong> sur le site et se
+          mettent à jour automatiquement.</p>
+          <label class="case-auto">
+            <input type="checkbox" id="champAvisAutoActif">
+            Afficher automatiquement mes avis Google
+          </label>
+          <label>Identifiant du lieu Google (Place ID)
+            <input type="text" id="champAvisPlaceId" placeholder="ChIJ… (voir l'aide ci-dessous)">
+          </label>
+          <details class="connexion-aide">
+            <summary>Où trouver mon identifiant de lieu&nbsp;?</summary>
+            <ol>
+              <li>Ouvrez <em>Google Place ID Finder</em> (developers.google.com/maps → Place ID Finder).</li>
+              <li>Tapez «&nbsp;Les Gourmets du Perche Longny&nbsp;» dans la recherche de la carte.</li>
+              <li>Copiez l'identifiant affiché (il commence par <code>ChIJ</code>) et collez-le ci-dessus.</li>
+              <li>Cochez la case, cliquez sur <strong>Enregistrer</strong>, puis sur <strong>Synchroniser maintenant</strong>.</li>
+            </ol>
+          </details>
+          <button class="btn btn-secondaire" type="button" id="btnSyncAvis">Synchroniser maintenant</button>
+          <p class="etat-avis-google" id="etatAvisGoogle" role="status"></p>
+        </div>
+
+        <h3>Avis manuels</h3>
+        <p class="sous-titre">Utilisés tant que l'option Google est désactivée (ou si aucun avis Google n'est disponible).</p>
         <label>Texte de la note globale
           <input type="text" id="champAvisNote" placeholder="5/5 — plus de 40 avis clients">
         </label>

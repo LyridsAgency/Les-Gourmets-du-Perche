@@ -28,6 +28,10 @@
     ]
   },
   "avisNote": "5/5 — plus de 40 avis clients",
+  "avisAuto": {
+    "actif": false,
+    "placeId": ""
+  },
   "avis": [
     {
       "texte": "Un boudin noir délicieux, une charcuterie superbe… on sent le travail d'artisan à chaque bouchée. La meilleure boucherie du secteur.",
