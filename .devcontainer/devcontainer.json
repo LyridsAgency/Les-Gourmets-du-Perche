@@ -1,0 +1,12 @@
+{
+  "name": "Les Gourmets du Perche",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "postCreateCommand": "npm install",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Site Les Gourmets du Perche",
+      "onAutoForward": "openPreview"
+    }
+  }
+}
