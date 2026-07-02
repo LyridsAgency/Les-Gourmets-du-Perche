@@ -37,6 +37,8 @@ img { max-width: 100%; display: block; }
 
 .container { width: min(1160px, 92%); margin-inline: auto; }
 
+.champ-cache { display: none !important; }
+
 .visually-hidden {
   position: absolute; width: 1px; height: 1px;
   clip: rect(0 0 0 0); overflow: hidden; white-space: nowrap;

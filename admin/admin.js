@@ -11,6 +11,8 @@
     branche: null // détectée automatiquement (branche par défaut du dépôt)
   };
   var CLE_TOKEN = "lgp_admin_token";
+  var CLE_SESSION = "lgp_session_ouverte";
+  var ITERATIONS_MDP = 150000;
   var API = "https://api.github.com";
 
   var token = null;
@@ -51,6 +53,37 @@
     });
   }
 
+  function hexVersOctets(hex) {
+    var octets = new Uint8Array(hex.length / 2);
+    for (var i = 0; i < octets.length; i++) octets[i] = parseInt(hex.substr(i * 2, 2), 16);
+    return octets;
+  }
+
+  function octetsVersHex(tampon) {
+    return Array.prototype.map.call(new Uint8Array(tampon), function (o) {
+      return o.toString(16).padStart(2, "0");
+    }).join("");
+  }
+
+  /* Empreinte PBKDF2-SHA256 du mot de passe : le mot de passe n'est jamais
+     stocké ni transmis, seule son empreinte est comparée. */
+  function empreinteMotDePasse(motDePasse, selHex, iterations) {
+    return crypto.subtle.importKey(
+      "raw", new TextEncoder().encode(motDePasse), "PBKDF2", false, ["deriveBits"]
+    ).then(function (cle) {
+      return crypto.subtle.deriveBits(
+        { name: "PBKDF2", salt: hexVersOctets(selHex), iterations: iterations, hash: "SHA-256" },
+        cle, 256
+      );
+    }).then(octetsVersHex);
+  }
+
+  function verifierMotDePasse(motDePasse, securite) {
+    if (!securite || !securite.hash) return Promise.resolve(true);
+    return empreinteMotDePasse(motDePasse, securite.sel, securite.iterations)
+      .then(function (h) { return h === securite.hash; });
+  }
+
   function nomFichierSur(nom) {
     return nom.toLowerCase()
       .normalize("NFD").replace(/[̀-ͯ]/g, "")
@@ -76,7 +109,7 @@
   }
 
   function deconnecter() {
-    localStorage.removeItem(CLE_TOKEN);
+    sessionStorage.removeItem(CLE_SESSION);
     location.reload();
   }
 
@@ -89,27 +122,58 @@
       });
   }
 
-  $("btnConnexion").addEventListener("click", function () {
-    var jeton = $("champToken").value.trim();
+  function erreurConnexion(message) {
     var erreur = $("connexionErreur");
-    erreur.hidden = true;
-    if (!jeton) { erreur.textContent = "Veuillez saisir votre clé d'accès."; erreur.hidden = false; return; }
+    erreur.textContent = message;
+    erreur.hidden = false;
+    $("btnConnexion").disabled = false;
+  }
+
+  $("btnConnexion").addEventListener("click", function () {
+    var motDePasse = $("champMdp").value;
+    $("connexionErreur").hidden = true;
+    if (!motDePasse) { erreurConnexion("Veuillez saisir votre mot de passe."); return; }
     $("btnConnexion").disabled = true;
-    connecter(jeton).catch(function (e) {
-      erreur.textContent = "Connexion impossible : " + e.message;
-      erreur.hidden = false;
-      $("btnConnexion").disabled = false;
-    });
+
+    // Le mot de passe est vérifié contre l'empreinte publiée avec le site
+    fetch("../content.json", { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error("Contenu du site introuvable."); return r.json(); })
+      .then(function (c) { return verifierMotDePasse(motDePasse, c.securite); })
+      .then(function (ok) {
+        if (!ok) throw new Error("Mot de passe incorrect.");
+        var jeton = localStorage.getItem(CLE_TOKEN) || $("champToken").value.trim();
+        if (!jeton) {
+          $("blocToken").hidden = false;
+          throw new Error("Première configuration : renseignez la clé GitHub ci-dessus.");
+        }
+        return connecter(jeton).then(function () {
+          sessionStorage.setItem(CLE_SESSION, "1");
+        });
+      })
+      .catch(function (e) {
+        if (/bad credentials|401/i.test(e.message)) {
+          localStorage.removeItem(CLE_TOKEN);
+          $("blocToken").hidden = false;
+          erreurConnexion("Clé GitHub expirée ou révoquée : renseignez une nouvelle clé.");
+        } else {
+          erreurConnexion(e.message);
+        }
+      });
   });
-  $("champToken").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") $("btnConnexion").click();
+  ["champMdp", "champToken"].forEach(function (id) {
+    $(id).addEventListener("keydown", function (e) {
+      if (e.key === "Enter") $("btnConnexion").click();
+    });
   });
   $("btnDeconnexion").addEventListener("click", deconnecter);
 
-  var jetonMemorise = localStorage.getItem(CLE_TOKEN);
-  if (jetonMemorise) {
-    connecter(jetonMemorise).catch(function () {
-      localStorage.removeItem(CLE_TOKEN);
+  // Le bloc « clé GitHub » n'apparaît qu'à la première configuration de l'appareil
+  if (!localStorage.getItem(CLE_TOKEN)) $("blocToken").hidden = false;
+
+  // Session déjà ouverte dans cet onglet : reconnexion directe
+  if (sessionStorage.getItem(CLE_SESSION) && localStorage.getItem(CLE_TOKEN)) {
+    connecter(localStorage.getItem(CLE_TOKEN)).catch(function () {
+      sessionStorage.removeItem(CLE_SESSION);
     });
   }
 
@@ -490,16 +554,8 @@
       });
     });
     chaine
+      .then(sauvegarderContentJson)
       .then(function () {
-        return enregistrerFichier(
-          "content.json",
-          texteVersB64(JSON.stringify(contenu, null, 2) + "\n"),
-          "Mise à jour du contenu depuis l'administration",
-          shaContenu
-        );
-      })
-      .then(function (reponse) {
-        shaContenu = reponse.content.sha;
         etat.className = "etat succes";
         etat.textContent = "✓ Modifications enregistrées — le site sera à jour dans 1 à 2 minutes.";
         remplirFormulaires();
@@ -509,5 +565,71 @@
         etat.textContent = "Erreur : " + e.message;
       })
       .then(function () { bouton.disabled = false; });
+  });
+
+  function sauvegarderContentJson() {
+    return enregistrerFichier(
+      "content.json",
+      texteVersB64(JSON.stringify(contenu, null, 2) + "\n"),
+      "Mise à jour du contenu depuis l'administration",
+      shaContenu
+    ).then(function (reponse) {
+      shaContenu = reponse.content.sha;
+    });
+  }
+
+  /* ================= Changement de mot de passe ================= */
+
+  $("btnChangerMdp").addEventListener("click", function () {
+    var bouton = $("btnChangerMdp");
+    var etat = $("etatMdp");
+    var actuel = $("champMdpActuel").value;
+    var nouveau = $("champMdpNouveau").value;
+    var confirme = $("champMdpConfirme").value;
+
+    etat.className = "etat-mdp";
+    if (!nouveau || nouveau.length < 8) {
+      etat.className = "etat-mdp erreur";
+      etat.textContent = "Le nouveau mot de passe doit contenir au moins 8 caractères.";
+      return;
+    }
+    if (nouveau !== confirme) {
+      etat.className = "etat-mdp erreur";
+      etat.textContent = "Les deux saisies du nouveau mot de passe ne correspondent pas.";
+      return;
+    }
+
+    bouton.disabled = true;
+    etat.textContent = "Vérification…";
+
+    verifierMotDePasse(actuel, contenu.securite)
+      .then(function (ok) {
+        if (!ok) throw new Error("Le mot de passe actuel est incorrect.");
+        var sel = octetsVersHex(crypto.getRandomValues(new Uint8Array(16)));
+        return empreinteMotDePasse(nouveau, sel, ITERATIONS_MDP).then(function (hash) {
+          contenu.securite = { sel: sel, hash: hash, iterations: ITERATIONS_MDP };
+        });
+      })
+      .then(sauvegarderContentJson)
+      .then(function () {
+        etat.className = "etat-mdp succes";
+        etat.textContent = "✓ Mot de passe changé — il sera actif sur le site dans 1 à 2 minutes.";
+        $("champMdpActuel").value = "";
+        $("champMdpNouveau").value = "";
+        $("champMdpConfirme").value = "";
+      })
+      .catch(function (e) {
+        etat.className = "etat-mdp erreur";
+        etat.textContent = "Erreur : " + e.message;
+      })
+      .then(function () { bouton.disabled = false; });
+  });
+
+  $("btnOublierCle").addEventListener("click", function () {
+    if (confirm("Oublier la clé GitHub enregistrée sur cet appareil ? Elle sera redemandée à la prochaine connexion.")) {
+      localStorage.removeItem(CLE_TOKEN);
+      sessionStorage.removeItem(CLE_SESSION);
+      location.reload();
+    }
   });
 })();

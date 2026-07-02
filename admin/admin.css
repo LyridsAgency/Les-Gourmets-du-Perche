@@ -201,6 +201,15 @@ a { color: var(--rouge); }
 .carte-avis .champs { display: grid; gap: 0.5rem; }
 .carte-avis label { margin: 0; }
 
+/* ---------- Sécurité ---------- */
+
+.bloc-token { display: grid; gap: 0.9rem; }
+.etat-mdp { font-size: 0.92rem; margin-top: 0.8rem; color: var(--encre-douce); }
+.etat-mdp.succes { color: var(--vert); font-weight: 600; }
+.etat-mdp.erreur { color: var(--rouge); font-weight: 600; }
+#section-securite .encart { margin-top: 2rem; }
+#section-securite .encart .btn { margin-top: 1rem; }
+
 /* ---------- Barre d'enregistrement ---------- */
 
 .barre-enregistrer {

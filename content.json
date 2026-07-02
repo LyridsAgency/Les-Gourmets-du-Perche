@@ -1,4 +1,9 @@
 {
+  "securite": {
+    "sel": "f3b337f15c4b94b9801c0b48051f90e0",
+    "hash": "24331269f928f8257037f8d652eb7db5eb50fd95848b88f6aa78595f342a55ec",
+    "iterations": 150000
+  },
   "annonce": "Nouveau : retrouvez-nous aussi à La Viennerie — Irai le vendredi & le samedi matin",
   "coordonnees": {
     "telLongny": "02 33 73 62 51",

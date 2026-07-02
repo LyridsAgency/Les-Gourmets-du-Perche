@@ -45,14 +45,34 @@ site public) et l'admin enregistre directement dans le dépôt GitHub via son AP
 « Enregistrer » crée un commit ; l'hébergement statique (GitHub Pages, Netlify…) republie le
 site en une à deux minutes.
 
-### Accès
+### Accès & sécurité
 
-L'admin demande une **clé d'accès** : un *fine-grained personal access token* GitHub limité à
-ce dépôt avec la seule permission **Contents : Read and write**
-(GitHub → Settings → Developer settings → Fine-grained tokens). La clé reste stockée dans le
-navigateur du commerçant. Le dépôt cible est configuré en tête de `admin/admin.js`
-(`DEPOT.proprietaire` / `DEPOT.repo`) ; la branche par défaut du dépôt est détectée
-automatiquement.
+La connexion à l'admin se fait par **mot de passe** :
+
+- Mot de passe initial : **`Test1`** — à changer immédiatement dans la rubrique
+  **Sécurité** du tableau de bord (8 caractères minimum, changement effectif en 1 à 2 minutes).
+- Le mot de passe n'est jamais stocké en clair : seule une empreinte **PBKDF2-SHA256**
+  (sel aléatoire, 150 000 itérations) est conservée dans `content.json` et vérifiée
+  dans le navigateur (WebCrypto).
+- À la **première connexion sur un appareil**, une clé GitHub est également demandée :
+  un *fine-grained personal access token* limité à ce dépôt avec la seule permission
+  **Contents : Read and write** (GitHub → Settings → Developer settings → Fine-grained tokens).
+  Elle reste dans le navigateur (`localStorage`) et n'est plus redemandée ; la rubrique
+  Sécurité permet de l'oublier sur l'appareil.
+- Le dépôt cible est configuré en tête de `admin/admin.js` (`DEPOT.proprietaire` /
+  `DEPOT.repo`) ; la branche par défaut est détectée automatiquement.
+
+**Modèle de sécurité, en toute transparence** : le site est statique, sans serveur. La
+protection réelle des données est la **clé GitHub** (sans elle, aucune écriture n'est
+possible) ; le mot de passe est une barrière d'accès au tableau de bord. Son empreinte
+étant publiée avec le site, un mot de passe **fort** est indispensable — un mot de passe
+faible comme `Test1` peut être retrouvé par force brute, d'où l'obligation de le changer
+dès la mise en service.
+
+Autres mesures en place : Content-Security-Policy sur le site et l'admin (scripts et
+connexions limités aux domaines nécessaires), champ anti-spam (honeypot) sur le formulaire,
+`noindex` sur l'admin, échappement systématique du contenu injecté (`textContent` /
+`createElement`, jamais d'`innerHTML` avec des données).
 
 ## Mise en relation avec les clients
 

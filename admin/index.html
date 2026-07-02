@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://api.github.com; form-action 'self'; base-uri 'self'; object-src 'none'">
   <title>Administration — Les Gourmets du Perche</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="../assets/img/logo.png">
@@ -19,19 +20,23 @@
       <img src="../assets/img/logo.png" alt="Les Gourmets du Perche" class="connexion-logo">
       <h1>Espace d'administration</h1>
       <p>Gérez le contenu de votre site : annonce, horaires, coordonnées, réseaux sociaux, réalisations et avis.</p>
-      <label for="champToken">Clé d'accès (jeton GitHub)</label>
-      <input type="password" id="champToken" placeholder="github_pat_…" autocomplete="off">
+      <label for="champMdp">Mot de passe</label>
+      <input type="password" id="champMdp" autocomplete="current-password">
+      <div class="bloc-token" id="blocToken" hidden>
+        <label for="champToken">Clé GitHub (première configuration uniquement)</label>
+        <input type="password" id="champToken" placeholder="github_pat_…" autocomplete="off">
+        <details class="connexion-aide">
+          <summary>Comment obtenir la clé GitHub&nbsp;?</summary>
+          <ol>
+            <li>Connectez-vous à GitHub puis ouvrez <em>Settings → Developer settings → Fine-grained personal access tokens → Generate new token</em>.</li>
+            <li>Dans <em>Repository access</em>, choisissez <em>Only select repositories</em> et sélectionnez le dépôt du site.</li>
+            <li>Dans <em>Permissions → Repository permissions</em>, passez <strong>Contents</strong> à <strong>Read and write</strong>.</li>
+            <li>Générez le jeton et collez-le ci-dessus. Il reste enregistré uniquement dans ce navigateur&nbsp;: cette étape n'est demandée qu'une seule fois par appareil.</li>
+          </ol>
+        </details>
+      </div>
       <button class="btn btn-primary btn-bloc" id="btnConnexion">Se connecter</button>
       <p class="connexion-erreur" id="connexionErreur" hidden></p>
-      <details class="connexion-aide">
-        <summary>Comment obtenir ma clé d'accès&nbsp;?</summary>
-        <ol>
-          <li>Connectez-vous à GitHub puis ouvrez <em>Settings → Developer settings → Fine-grained personal access tokens → Generate new token</em>.</li>
-          <li>Dans <em>Repository access</em>, choisissez <em>Only select repositories</em> et sélectionnez le dépôt du site.</li>
-          <li>Dans <em>Permissions → Repository permissions</em>, passez <strong>Contents</strong> à <strong>Read and write</strong>.</li>
-          <li>Générez le jeton et collez-le ci-dessus. Il reste enregistré uniquement dans ce navigateur.</li>
-        </ol>
-      </details>
     </div>
   </div>
 
@@ -46,6 +51,7 @@
         <button class="onglet" data-section="horaires">Horaires</button>
         <button class="onglet" data-section="realisations">Réalisations</button>
         <button class="onglet" data-section="avis">Avis clients</button>
+        <button class="onglet" data-section="securite">Sécurité</button>
       </nav>
       <div class="menu-pied">
         <a href="../index.html" target="_blank" rel="noopener">Voir le site ↗</a>
@@ -138,6 +144,34 @@
         </label>
         <div class="liste-avis" id="listeAvis"></div>
         <button class="btn btn-secondaire" id="btnAjoutAvis">+ Ajouter un avis</button>
+      </section>
+
+      <!-- Sécurité -->
+      <section class="section-admin" id="section-securite">
+        <h2>Sécurité</h2>
+        <p class="sous-titre">Changez ici le mot de passe d'accès à cette administration. Choisissez un mot de passe long et unique (8 caractères minimum).</p>
+        <label>Mot de passe actuel
+          <input type="password" id="champMdpActuel" autocomplete="current-password">
+        </label>
+        <div class="grille-champs">
+          <label>Nouveau mot de passe
+            <input type="password" id="champMdpNouveau" autocomplete="new-password" minlength="8">
+          </label>
+          <label>Confirmer le nouveau mot de passe
+            <input type="password" id="champMdpConfirme" autocomplete="new-password" minlength="8">
+          </label>
+        </div>
+        <button class="btn btn-primary" id="btnChangerMdp">Changer le mot de passe</button>
+        <p class="etat-mdp" id="etatMdp" role="status"></p>
+        <div class="encart">
+          <h3>Bon à savoir</h3>
+          <ol>
+            <li>Le mot de passe n'est jamais enregistré en clair : seule une empreinte chiffrée est conservée.</li>
+            <li>Le changement est immédiat : l'ancien mot de passe ne fonctionne plus dès l'enregistrement (comptez 1 à 2 minutes de mise en ligne).</li>
+            <li>La clé GitHub reste la protection principale des données : ne la partagez jamais.</li>
+          </ol>
+          <button class="btn btn-secondaire" id="btnOublierCle">Oublier la clé GitHub sur cet appareil</button>
+        </div>
       </section>
     </main>
 
