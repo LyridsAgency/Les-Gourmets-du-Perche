@@ -175,7 +175,8 @@ function assainirContenu(recu, securiteExistante) {
     coordonnees: {
       telLongny: chaine(c.coordonnees && c.coordonnees.telLongny, 30),
       telIrai: chaine(c.coordonnees && c.coordonnees.telIrai, 30),
-      email: chaine(c.coordonnees && c.coordonnees.email, 120)
+      email: chaine(c.coordonnees && c.coordonnees.email, 120),
+      emailDevis: chaine(c.coordonnees && c.coordonnees.emailDevis, 120)
     },
     reseaux: {
       facebook: chaine(c.reseaux && c.reseaux.facebook, 300),

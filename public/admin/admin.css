@@ -133,6 +133,7 @@ a { color: var(--rouge); }
 }
 .panneau textarea { resize: vertical; }
 .grille-champs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.aide-champ { display: block; font-weight: 400; font-size: 0.84rem; color: var(--encre-douce); margin-top: 0.35rem; }
 
 /* ---------- Tableau de bord ---------- */
 
