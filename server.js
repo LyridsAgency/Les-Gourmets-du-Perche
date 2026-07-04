@@ -161,6 +161,32 @@ function chaine(valeur, max) {
 const CATEGORIES = ["mariage", "plateau", "charcuterie", "plat"];
 const CHEMIN_IMAGE = /^(assets\/realisations\/|uploads\/)[a-zA-Z0-9._-]+$/;
 
+function listeChaines(valeur, maxItems, maxLen) {
+  return (Array.isArray(valeur) ? valeur : []).slice(0, maxItems)
+    .map((v) => chaine(v, maxLen)).filter((v) => v);
+}
+
+function assainirTextes(t) {
+  t = t && typeof t === "object" ? t : {};
+  return {
+    heroSurtitre: chaine(t.heroSurtitre, 160),
+    heroTitre: chaine(t.heroTitre, 160),
+    heroTitreAccent: chaine(t.heroTitreAccent, 120),
+    heroAccroche: chaine(t.heroAccroche, 600),
+    maisonSurtitre: chaine(t.maisonSurtitre, 80),
+    maisonTitre: chaine(t.maisonTitre, 160),
+    maisonParagraphes: listeChaines(t.maisonParagraphes, 6, 900),
+    maisonBadges: listeChaines(t.maisonBadges, 8, 60),
+    savoirSurtitre: chaine(t.savoirSurtitre, 80),
+    savoirTitre: chaine(t.savoirTitre, 160),
+    metiers: (Array.isArray(t.metiers) ? t.metiers : []).slice(0, 3).map((m) => ({
+      titre: chaine(m && m.titre, 80),
+      texte: chaine(m && m.texte, 700),
+      points: listeChaines(m && m.points, 6, 120)
+    }))
+  };
+}
+
 function assainirContenu(recu, securiteExistante) {
   const c = recu && typeof recu === "object" ? recu : {};
   const horaires = (lignes) => (Array.isArray(lignes) ? lignes : []).slice(0, 14).map((l) => ({
@@ -187,6 +213,7 @@ function assainirContenu(recu, securiteExistante) {
       longny: horaires(c.horaires && c.horaires.longny),
       irai: horaires(c.horaires && c.horaires.irai)
     },
+    textes: assainirTextes(c.textes),
     avisNote: chaine(c.avisNote, 120),
     avisAuto: {
       actif: !!(c.avisAuto && c.avisAuto.actif),

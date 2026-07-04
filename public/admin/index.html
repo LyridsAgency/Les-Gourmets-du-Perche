@@ -34,6 +34,7 @@
       <nav>
         <button class="onglet actif" data-section="tableau">Tableau de bord</button>
         <button class="onglet" data-section="annonce">Bandeau d'annonce</button>
+        <button class="onglet" data-section="textes">Textes du site</button>
         <button class="onglet" data-section="coordonnees">Coordonnées &amp; réseaux</button>
         <button class="onglet" data-section="horaires">Horaires</button>
         <button class="onglet" data-section="realisations">Réalisations</button>
@@ -69,6 +70,55 @@
         <label>Texte de l'annonce
           <textarea id="champAnnonce" rows="3"></textarea>
         </label>
+      </section>
+
+      <!-- Textes du site -->
+      <section class="section-admin" id="section-textes">
+        <h2>Textes du site</h2>
+        <p class="sous-titre">Modifiez ici tous les textes de la page d'accueil. Ils s'affichent aussitôt sur le site après enregistrement.</p>
+
+        <h3>Bloc d'accueil (en haut de page)</h3>
+        <label>Petit texte au-dessus du titre
+          <input type="text" id="txtHeroSurtitre">
+        </label>
+        <div class="grille-champs">
+          <label>Titre principal
+            <input type="text" id="txtHeroTitre">
+          </label>
+          <label>Fin du titre en rouge (accent)
+            <input type="text" id="txtHeroTitreAccent">
+          </label>
+        </div>
+        <label>Phrase d'accroche
+          <textarea id="txtHeroAccroche" rows="3"></textarea>
+        </label>
+
+        <h3>Section « La Maison »</h3>
+        <div class="grille-champs">
+          <label>Petit texte (surtitre)
+            <input type="text" id="txtMaisonSurtitre">
+          </label>
+          <label>Titre
+            <input type="text" id="txtMaisonTitre">
+          </label>
+        </div>
+        <label>Paragraphes <span class="optionnel">(laissez une ligne vide entre chaque paragraphe)</span>
+          <textarea id="txtMaisonParagraphes" rows="9"></textarea>
+        </label>
+        <label>Étiquettes <span class="optionnel">(une par ligne)</span>
+          <textarea id="txtMaisonBadges" rows="4"></textarea>
+        </label>
+
+        <h3>Section « Nos métiers »</h3>
+        <div class="grille-champs">
+          <label>Petit texte (surtitre)
+            <input type="text" id="txtSavoirSurtitre">
+          </label>
+          <label>Titre
+            <input type="text" id="txtSavoirTitre">
+          </label>
+        </div>
+        <div id="listeMetiers"></div>
       </section>
 
       <!-- Coordonnées & réseaux -->

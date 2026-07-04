@@ -134,6 +134,8 @@ a { color: var(--rouge); }
 .panneau textarea { resize: vertical; }
 .grille-champs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .aide-champ { display: block; font-weight: 400; font-size: 0.84rem; color: var(--encre-douce); margin-top: 0.35rem; }
+.carte-metier { background: var(--blanc); border: 1px solid rgba(196,26,20,0.14); border-radius: 14px; padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
+.titre-metier { font-family: var(--police-titre); color: var(--bordeaux); margin: 0 0 0.6rem; font-size: 1.05rem; }
 
 /* ---------- Tableau de bord ---------- */
 

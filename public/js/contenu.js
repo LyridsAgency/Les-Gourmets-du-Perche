@@ -101,11 +101,71 @@
     if (note && donnees.avisNote) note.textContent = donnees.avisNote;
   }
 
+  function texte(id, valeur) {
+    var el = document.getElementById(id);
+    if (el && valeur) el.textContent = valeur;
+  }
+
+  function appliquerTextes(t) {
+    if (!t) return;
+    texte("heroSurtitre", t.heroSurtitre);
+    texte("heroTitre", t.heroTitre);
+    texte("heroTitreAccent", t.heroTitreAccent);
+    texte("heroAccroche", t.heroAccroche);
+    texte("maisonSurtitre", t.maisonSurtitre);
+    texte("maisonTitre", t.maisonTitre);
+    texte("savoirSurtitre", t.savoirSurtitre);
+    texte("savoirTitre", t.savoirTitre);
+
+    var paras = document.getElementById("maisonParagraphes");
+    if (paras && Array.isArray(t.maisonParagraphes) && t.maisonParagraphes.length) {
+      paras.textContent = "";
+      t.maisonParagraphes.forEach(function (txt) {
+        var p = document.createElement("p");
+        p.textContent = txt;
+        paras.appendChild(p);
+      });
+    }
+
+    var badges = document.getElementById("maisonBadges");
+    if (badges && Array.isArray(t.maisonBadges) && t.maisonBadges.length) {
+      badges.textContent = "";
+      t.maisonBadges.forEach(function (b) {
+        var li = document.createElement("li");
+        li.textContent = b;
+        badges.appendChild(li);
+      });
+    }
+
+    if (Array.isArray(t.metiers) && t.metiers.length) {
+      var articles = document.querySelectorAll("#metiers .metier");
+      t.metiers.forEach(function (m, i) {
+        var art = articles[i];
+        if (!art) return;
+        var h3 = art.querySelector("h3");
+        var p = art.querySelector("p");
+        var ul = art.querySelector("ul");
+        if (h3 && m.titre) h3.textContent = m.titre;
+        if (p && m.texte) p.textContent = m.texte;
+        if (ul && Array.isArray(m.points) && m.points.length) {
+          ul.textContent = "";
+          m.points.forEach(function (pt) {
+            var li = document.createElement("li");
+            li.textContent = pt;
+            ul.appendChild(li);
+          });
+        }
+      });
+    }
+  }
+
   fetch("content.json", { cache: "no-cache" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (c) {
       var annonce = document.getElementById("topbarTexte");
       if (annonce && c.annonce) annonce.textContent = c.annonce;
+
+      appliquerTextes(c.textes);
 
       if (c.coordonnees) {
         majTel("longny", c.coordonnees.telLongny);

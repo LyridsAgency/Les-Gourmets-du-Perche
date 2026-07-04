@@ -16,6 +16,44 @@
     "instagram": "",
     "tiktok": ""
   },
+  "textes": {
+    "heroSurtitre": "Artisan — Commerçant Brard · Longny-au-Perche",
+    "heroTitre": "Boucherie, charcuterie & traiteur",
+    "heroTitreAccent": "au cœur du Perche",
+    "heroAccroche": "Viandes sélectionnées avec exigence, charcuterie fabriquée maison et plats cuisinés comme à la maison. La Maison Brard met son savoir-faire artisanal au service de vos repas du quotidien comme de vos plus belles réceptions.",
+    "maisonSurtitre": "La Maison",
+    "maisonTitre": "Une maison artisanale, un artisan passionné",
+    "maisonParagraphes": [
+      "Installée sur la place de l'Hôtel de Ville de Longny-au-Perche, la Maison Brard perpétue le métier de boucher-charcutier-traiteur dans la plus pure tradition artisanale. Anthony Brard et son équipe sélectionnent des viandes de qualité, privilégient les circuits courts et fabriquent sur place charcuteries et plats cuisinés.",
+      "Membre de la Fédération Régionale de la Boucherie de Normandie, la maison s'est forgé une solide réputation dans tout le Perche : boudin noir maison, plateaux de charcuterie généreux, viandes maturées et prestations traiteur soignées pour les grandes occasions.",
+      "Depuis septembre 2025, une seconde boutique à La Viennerie (Irai) permet de retrouver nos produits encore plus près de chez vous."
+    ],
+    "maisonBadges": [
+      "Artisan boucher-charcutier",
+      "Fabrication maison",
+      "Circuits courts",
+      "Fédération Boucherie Normandie"
+    ],
+    "savoirSurtitre": "Nos métiers",
+    "savoirTitre": "Trois savoir-faire, une même exigence",
+    "metiers": [
+      {
+        "titre": "Boucherie",
+        "texte": "Bœuf, veau, porc, agneau et volailles fermières : des viandes sélectionnées, préparées et parées à la demande. Pièces à griller, à rôtir ou à mijoter, préparations pour barbecue et découpes sur mesure.",
+        "points": ["Viandes d'éleveurs régionaux", "Découpe & préparation à la demande", "Demi-porc & colis de viande sur commande"]
+      },
+      {
+        "titre": "Charcuterie maison",
+        "texte": "Boudin noir, pâtés, terrines, rillettes, saucisses et jambons : toute notre charcuterie est fabriquée dans nos laboratoires, selon des recettes artisanales qui font notre réputation dans le Perche.",
+        "points": ["Boudin noir, spécialité de la maison", "Terrines & pâtés artisanaux", "Plateaux de charcuterie composés"]
+      },
+      {
+        "titre": "Traiteur & réceptions",
+        "texte": "Mariages, baptêmes, anniversaires, repas d'entreprise ou de famille : nous composons avec vous un menu à votre image, du cocktail apéritif au plat chaud, livré ou servi selon vos envies.",
+        "points": ["Menus personnalisés & devis gratuit", "Buffets froids & plats chauds", "Plateaux apéritifs & cocktails"]
+      }
+    ]
+  },
   "horaires": {
     "longny": [
       { "jours": "Mardi — Vendredi", "heures": "8h00 – 13h00 · 15h00 – 19h00", "ferme": false },

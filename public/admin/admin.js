@@ -110,6 +110,9 @@
     // Annonce
     $("champAnnonce").value = contenu.annonce || "";
 
+    // Textes du site
+    remplirTextes(contenu.textes || {});
+
     // Coordonnées & réseaux
     $("champTelLongny").value = contenu.coordonnees.telLongny || "";
     $("champTelIrai").value = contenu.coordonnees.telIrai || "";
@@ -187,6 +190,97 @@
       })
       .then(function () { bouton.disabled = false; });
   });
+
+  /* ----- Textes du site ----- */
+
+  function remplirTextes(t) {
+    $("txtHeroSurtitre").value = t.heroSurtitre || "";
+    $("txtHeroTitre").value = t.heroTitre || "";
+    $("txtHeroTitreAccent").value = t.heroTitreAccent || "";
+    $("txtHeroAccroche").value = t.heroAccroche || "";
+    $("txtMaisonSurtitre").value = t.maisonSurtitre || "";
+    $("txtMaisonTitre").value = t.maisonTitre || "";
+    $("txtMaisonParagraphes").value = (t.maisonParagraphes || []).join("\n\n");
+    $("txtMaisonBadges").value = (t.maisonBadges || []).join("\n");
+    $("txtSavoirSurtitre").value = t.savoirSurtitre || "";
+    $("txtSavoirTitre").value = t.savoirTitre || "";
+
+    var conteneur = $("listeMetiers");
+    conteneur.innerHTML = "";
+    (t.metiers || []).forEach(function (m, i) {
+      conteneur.appendChild(carteMetier(m, i + 1));
+    });
+  }
+
+  function carteMetier(m, numero) {
+    m = m || { titre: "", texte: "", points: [] };
+    var bloc = document.createElement("div");
+    bloc.className = "carte-metier";
+
+    var titre = document.createElement("h4");
+    titre.className = "titre-metier";
+    titre.textContent = "Métier " + numero;
+    bloc.appendChild(titre);
+
+    var lTitre = document.createElement("label");
+    lTitre.appendChild(document.createTextNode("Nom du métier"));
+    var cTitre = document.createElement("input");
+    cTitre.type = "text";
+    cTitre.className = "metier-titre";
+    cTitre.value = m.titre || "";
+    lTitre.appendChild(cTitre);
+
+    var lTexte = document.createElement("label");
+    lTexte.appendChild(document.createTextNode("Description"));
+    var cTexte = document.createElement("textarea");
+    cTexte.rows = 3;
+    cTexte.className = "metier-texte";
+    cTexte.value = m.texte || "";
+    lTexte.appendChild(cTexte);
+
+    var lPoints = document.createElement("label");
+    var sp = document.createElement("span");
+    sp.className = "optionnel";
+    lPoints.appendChild(document.createTextNode("Points forts "));
+    sp.textContent = "(un par ligne)";
+    lPoints.appendChild(sp);
+    var cPoints = document.createElement("textarea");
+    cPoints.rows = 3;
+    cPoints.className = "metier-points";
+    cPoints.value = (m.points || []).join("\n");
+    lPoints.appendChild(cPoints);
+
+    bloc.appendChild(lTitre);
+    bloc.appendChild(lTexte);
+    bloc.appendChild(lPoints);
+    return bloc;
+  }
+
+  function lignes(valeur) {
+    return valeur.split("\n").map(function (s) { return s.trim(); }).filter(function (s) { return s; });
+  }
+
+  function lireTextes() {
+    return {
+      heroSurtitre: $("txtHeroSurtitre").value.trim(),
+      heroTitre: $("txtHeroTitre").value.trim(),
+      heroTitreAccent: $("txtHeroTitreAccent").value.trim(),
+      heroAccroche: $("txtHeroAccroche").value.trim(),
+      maisonSurtitre: $("txtMaisonSurtitre").value.trim(),
+      maisonTitre: $("txtMaisonTitre").value.trim(),
+      maisonParagraphes: $("txtMaisonParagraphes").value.split(/\n\s*\n/).map(function (s) { return s.trim(); }).filter(function (s) { return s; }),
+      maisonBadges: lignes($("txtMaisonBadges").value),
+      savoirSurtitre: $("txtSavoirSurtitre").value.trim(),
+      savoirTitre: $("txtSavoirTitre").value.trim(),
+      metiers: Array.prototype.map.call($("listeMetiers").children, function (bloc) {
+        return {
+          titre: bloc.querySelector(".metier-titre").value.trim(),
+          texte: bloc.querySelector(".metier-texte").value.trim(),
+          points: lignes(bloc.querySelector(".metier-points").value)
+        };
+      })
+    };
+  }
 
   /* ----- Horaires ----- */
 
@@ -450,6 +544,7 @@
     etat.textContent = "Enregistrement en cours…";
 
     contenu.annonce = $("champAnnonce").value.trim();
+    contenu.textes = lireTextes();
     contenu.coordonnees = {
       telLongny: $("champTelLongny").value.trim(),
       telIrai: $("champTelIrai").value.trim(),
