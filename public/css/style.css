@@ -458,6 +458,9 @@ a:hover { color: var(--rouge-fonce); }
 .formulaire textarea { resize: vertical; }
 .champ-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .formulaire-rgpd { font-size: 0.82rem; color: var(--encre-douce); text-align: center; margin: 0; }
+.formulaire-etat { font-size: 0.95rem; text-align: center; margin: 0; padding: 0.7rem 1rem; border-radius: 10px; }
+.formulaire-etat.succes { color: #1f7a4d; background: #e8f5ec; border: 1px solid #b6e0c4; }
+.formulaire-etat.erreur { color: var(--rouge); background: #fdecea; border: 1px solid #f5c3bd; }
 
 /* ---------- Pied de page ---------- */
 

@@ -29,12 +29,15 @@
 
   /* ================= Connexion ================= */
 
+  var messages = []; // messages reçus (cache)
+
   function ouvrirAdmin() {
     return api("/api/admin/contenu").then(function (c) {
       contenu = c;
       $("ecranConnexion").hidden = true;
       $("admin").hidden = false;
       remplirFormulaires();
+      chargerMessages();
     });
   }
 
@@ -72,40 +75,77 @@
 
   /* ================= Navigation ================= */
 
-  document.querySelectorAll(".onglet").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      document.querySelectorAll(".onglet").forEach(function (b) { b.classList.remove("actif"); });
-      btn.classList.add("actif");
-      document.querySelectorAll(".section-admin").forEach(function (s) { s.classList.remove("visible"); });
-      $("section-" + btn.dataset.section).classList.add("visible");
+  function afficherSection(nom) {
+    document.querySelectorAll(".onglet").forEach(function (b) {
+      b.classList.toggle("actif", b.dataset.section === nom);
     });
+    document.querySelectorAll(".section-admin").forEach(function (s) {
+      s.classList.toggle("visible", s.id === "section-" + nom);
+    });
+    if (nom === "messages") rendreMessages();
+    window.scrollTo(0, 0);
+  }
+
+  // Onglets + tout bouton portant data-section (ex. « Tout voir » du tableau de bord)
+  document.querySelectorAll("[data-section]").forEach(function (btn) {
+    btn.addEventListener("click", function () { afficherSection(btn.dataset.section); });
   });
 
   /* ================= Remplissage des formulaires ================= */
 
-  function remplirFormulaires() {
-    // Tableau de bord
+  var ICONES = {
+    image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M4 17l5-5 4 4 3-3 4 4"/>',
+    etoile: '<path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/>',
+    chat: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    partage: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>',
+    texte: '<path d="M4 7V5h16v2M9 5v14M7 19h4"/>'
+  };
+
+  function carteStat(icone, chiffre, label) {
+    var carte = document.createElement("div");
+    carte.className = "stat";
+    var ico = document.createElement("div");
+    ico.className = "stat-icone";
+    ico.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">' + ICONES[icone] + '</svg>';
+    var ch = document.createElement("div");
+    ch.className = "stat-chiffre";
+    ch.textContent = chiffre;
+    var lb = document.createElement("div");
+    lb.className = "stat-label";
+    lb.textContent = label;
+    carte.appendChild(ico);
+    carte.appendChild(ch);
+    carte.appendChild(lb);
+    return carte;
+  }
+
+  function majTableauDeBord() {
+    if (!contenu) return;
     var reseauxActifs = ["facebook", "instagram", "tiktok"].filter(function (n) {
       return (contenu.reseaux && contenu.reseaux[n] || "").trim();
     }).length;
+    var nonLus = messages.filter(function (m) { return !m.lu; }).length;
     $("stats").innerHTML = "";
-    [
-      [contenu.realisations.length, "réalisations en galerie"],
-      [contenu.avis.length, "avis clients affichés"],
-      [reseauxActifs, "réseau(x) social(aux) relié(s)"]
-    ].forEach(function (paire) {
-      var carte = document.createElement("div");
-      carte.className = "stat";
-      var chiffre = document.createElement("div");
-      chiffre.className = "stat-chiffre";
-      chiffre.textContent = paire[0];
-      var label = document.createElement("div");
-      label.className = "stat-label";
-      label.textContent = paire[1];
-      carte.appendChild(chiffre);
-      carte.appendChild(label);
-      $("stats").appendChild(carte);
-    });
+    $("stats").appendChild(carteStat("image", contenu.realisations.length, "réalisations en galerie"));
+    $("stats").appendChild(carteStat("etoile", contenu.avis.length, "avis clients affichés"));
+    $("stats").appendChild(carteStat("chat", messages.length, "messages reçus"));
+    $("stats").appendChild(carteStat("partage", reseauxActifs, "réseau(x) social(aux) relié(s)"));
+
+    // Pastilles du menu
+    majBadge("badgeRealisations", contenu.realisations.length, false);
+    majBadge("badgeAvis", contenu.avis.length, false);
+    majBadge("badgeMessages", nonLus, true);
+  }
+
+  function majBadge(id, valeur, alerte) {
+    var el = $(id);
+    if (!el) return;
+    if (valeur > 0) { el.textContent = valeur; el.hidden = false; }
+    else { el.hidden = true; }
+  }
+
+  function remplirFormulaires() {
+    majTableauDeBord();
 
     // Annonce
     $("champAnnonce").value = contenu.annonce || "";
@@ -147,6 +187,195 @@
     });
     rafraichirEtatAvisGoogle();
   }
+
+  /* ================= Messages reçus ================= */
+
+  var filtreMessages = "tous";
+
+  function chargerMessages() {
+    api("/api/admin/messages").then(function (liste) {
+      messages = Array.isArray(liste) ? liste : [];
+      majTableauDeBord();
+      rendreApercu();
+      rendreMessages();
+    }).catch(function () { /* silencieux */ });
+  }
+
+  function formaterDateHeure(ms) {
+    try {
+      var d = new Date(ms);
+      return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" }) +
+        ", " + d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    } catch (e) { return ""; }
+  }
+
+  function rendreApercu() {
+    var conteneur = $("apercuMessages");
+    if (!conteneur) return;
+    conteneur.innerHTML = "";
+    if (!messages.length) {
+      var vide = document.createElement("p");
+      vide.className = "messages-vide";
+      vide.textContent = "Aucun message pour l'instant. Les demandes du formulaire de contact apparaîtront ici.";
+      conteneur.appendChild(vide);
+      return;
+    }
+    messages.slice(0, 3).forEach(function (m) {
+      var bloc = document.createElement("div");
+      bloc.className = "apercu-message";
+      var tete = document.createElement("div");
+      tete.className = "message-tete";
+      var g = document.createElement("span");
+      var nom = document.createElement("span");
+      nom.className = "message-nom";
+      nom.textContent = m.nom;
+      g.appendChild(nom);
+      if (m.type) {
+        var obj = document.createElement("span");
+        obj.className = "message-objet";
+        obj.textContent = " — " + m.type;
+        g.appendChild(obj);
+      }
+      if (!m.lu) {
+        var p = document.createElement("span");
+        p.className = "puce puce-nouveau";
+        p.textContent = "nouveau";
+        g.appendChild(p);
+      }
+      var date = document.createElement("span");
+      date.className = "message-date";
+      date.textContent = formaterDateHeure(m.date);
+      tete.appendChild(g);
+      tete.appendChild(date);
+      var txt = document.createElement("p");
+      txt.className = "message-texte";
+      txt.textContent = m.message.length > 120 ? m.message.slice(0, 120) + "…" : m.message;
+      bloc.appendChild(tete);
+      bloc.appendChild(txt);
+      conteneur.appendChild(bloc);
+    });
+  }
+
+  function messagesFiltres() {
+    if (filtreMessages === "non-lus") return messages.filter(function (m) { return !m.lu; });
+    if (filtreMessages === "a-traiter") return messages.filter(function (m) { return !m.traite; });
+    return messages;
+  }
+
+  function rendreMessages() {
+    var conteneur = $("listeMessages");
+    if (!conteneur) return;
+    conteneur.innerHTML = "";
+    var liste = messagesFiltres();
+    if (!liste.length) {
+      var vide = document.createElement("p");
+      vide.className = "messages-vide";
+      vide.textContent = "Aucun message dans cette catégorie.";
+      conteneur.appendChild(vide);
+      return;
+    }
+    liste.forEach(function (m) { conteneur.appendChild(carteMessage(m)); });
+  }
+
+  function carteMessage(m) {
+    var carte = document.createElement("div");
+    carte.className = "message" + (m.lu ? "" : " non-lu");
+
+    var tete = document.createElement("div");
+    tete.className = "message-tete";
+    var g = document.createElement("span");
+    var nom = document.createElement("span");
+    nom.className = "message-nom";
+    nom.textContent = m.nom;
+    g.appendChild(nom);
+    if (m.type) {
+      var obj = document.createElement("span");
+      obj.className = "message-objet";
+      obj.textContent = " — " + m.type;
+      g.appendChild(obj);
+    }
+    if (!m.lu) { var pn = document.createElement("span"); pn.className = "puce puce-nouveau"; pn.textContent = "nouveau"; g.appendChild(pn); }
+    if (m.traite) { var pt = document.createElement("span"); pt.className = "puce puce-traite"; pt.textContent = "traité"; g.appendChild(pt); }
+    var date = document.createElement("span");
+    date.className = "message-date";
+    date.textContent = formaterDateHeure(m.date);
+    tete.appendChild(g);
+    tete.appendChild(date);
+
+    var coords = document.createElement("div");
+    coords.className = "message-coords";
+    var liens = [];
+    if (m.email) liens.push('<a href="mailto:' + encodeURI(m.email) + '">' + echapper(m.email) + "</a>");
+    if (m.telephone) liens.push('<a href="tel:' + encodeURI(m.telephone.replace(/\s/g, "")) + '">' + echapper(m.telephone) + "</a>");
+    if (m.dateEvenement) liens.push("Événement : " + echapper(m.dateEvenement));
+    if (m.convives) liens.push(echapper(m.convives) + " convives");
+    coords.innerHTML = liens.join("");
+
+    var txt = document.createElement("p");
+    txt.className = "message-texte";
+    txt.textContent = m.message;
+
+    var actions = document.createElement("div");
+    actions.className = "message-actions";
+    actions.appendChild(boutonMessage(m.lu ? "Marquer non lu" : "Marquer comme lu", "btn-secondaire", function () {
+      majMessage(m.id, { lu: !m.lu });
+    }));
+    actions.appendChild(boutonMessage(m.traite ? "Rouvrir" : "Marquer traité", m.traite ? "btn-secondaire" : "btn-primary", function () {
+      majMessage(m.id, { traite: !m.traite });
+    }));
+    actions.appendChild(boutonMessage("Supprimer", "btn-secondaire bouton-suppr-msg", function () {
+      if (confirm("Supprimer définitivement ce message ?")) supprimerMessage(m.id);
+    }));
+
+    carte.appendChild(tete);
+    carte.appendChild(coords);
+    carte.appendChild(txt);
+    carte.appendChild(actions);
+    return carte;
+  }
+
+  function boutonMessage(texte, classe, action) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "btn " + classe;
+    b.textContent = texte;
+    b.addEventListener("click", action);
+    return b;
+  }
+
+  function echapper(s) {
+    var d = document.createElement("div");
+    d.textContent = s == null ? "" : String(s);
+    return d.innerHTML;
+  }
+
+  function majMessage(id, champs) {
+    api("/api/admin/messages/" + encodeURIComponent(id), { method: "PUT", json: champs })
+      .then(function () {
+        var m = messages.find(function (x) { return x.id === id; });
+        if (m) Object.keys(champs).forEach(function (k) { m[k] = champs[k]; });
+        majTableauDeBord(); rendreApercu(); rendreMessages();
+      })
+      .catch(function (e) { alert("Action impossible : " + e.message); });
+  }
+
+  function supprimerMessage(id) {
+    api("/api/admin/messages/" + encodeURIComponent(id), { method: "DELETE" })
+      .then(function () {
+        messages = messages.filter(function (x) { return x.id !== id; });
+        majTableauDeBord(); rendreApercu(); rendreMessages();
+      })
+      .catch(function (e) { alert("Suppression impossible : " + e.message); });
+  }
+
+  document.querySelectorAll(".filtre-msg").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".filtre-msg").forEach(function (b) { b.classList.remove("actif"); });
+      btn.classList.add("actif");
+      filtreMessages = btn.dataset.filtreMsg;
+      rendreMessages();
+    });
+  });
 
   /* ----- Avis Google ----- */
 

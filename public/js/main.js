@@ -87,4 +87,40 @@
   /* ----- Année du pied de page ----- */
   var annee = document.getElementById("annee");
   if (annee) annee.textContent = String(new Date().getFullYear());
+
+  /* ----- Formulaire de contact : envoi vers le serveur ----- */
+  var form = document.getElementById("formDevis");
+  if (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var etat = document.getElementById("formEtat");
+      var bouton = form.querySelector("button[type=submit]");
+      var donnees = {};
+      new FormData(form).forEach(function (v, k) { donnees[k] = v; });
+      bouton.disabled = true;
+      if (etat) { etat.hidden = true; etat.className = "formulaire-etat"; }
+      fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(donnees)
+      })
+        .then(function (r) { return r.json().then(function (c) { if (!r.ok) throw new Error(c.erreur || "Erreur"); return c; }); })
+        .then(function () {
+          form.reset();
+          if (etat) {
+            etat.textContent = "✓ Merci ! Votre demande a bien été envoyée. Nous vous répondrons rapidement.";
+            etat.className = "formulaire-etat succes";
+            etat.hidden = false;
+          }
+        })
+        .catch(function (err) {
+          if (etat) {
+            etat.textContent = err.message + " — vous pouvez aussi nous appeler directement.";
+            etat.className = "formulaire-etat erreur";
+            etat.hidden = false;
+          }
+        })
+        .then(function () { bouton.disabled = false; });
+    });
+  }
 })();

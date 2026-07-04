@@ -174,12 +174,6 @@
           a.href = "mailto:" + c.coordonnees.email;
           a.textContent = c.coordonnees.email;
         });
-        // Le formulaire de devis est envoyé à l'adresse choisie dans l'administration
-        var form = document.getElementById("formDevis");
-        var dest = (c.coordonnees.emailDevis || c.coordonnees.email || "").trim();
-        if (form && dest) {
-          form.action = "https://formsubmit.co/" + encodeURIComponent(dest);
-        }
       }
       majReseaux(c.reseaux);
       if (c.horaires) {

@@ -19,6 +19,7 @@ const PORT = process.env.PORT || 3000;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const FICHIER_CONTENU = path.join(DATA_DIR, "content.json");
+const FICHIER_MESSAGES = path.join(DATA_DIR, "messages.json");
 const DOSSIER_UPLOADS = path.join(DATA_DIR, "uploads");
 const GRAINE_CONTENU = path.join(__dirname, "content.json");
 const ITERATIONS_MDP = 150000;
@@ -60,6 +61,44 @@ async function verifierMotDePasse(motDePasse, securite) {
   const calculee = await empreinte(String(motDePasse), securite.sel, securite.iterations);
   const attendue = Buffer.from(securite.hash, "hex");
   return calculee.length === attendue.length && crypto.timingSafeEqual(calculee, attendue);
+}
+
+/* ---------- Messages reçus (formulaire de contact) ---------- */
+
+function lireMessages() {
+  try { return JSON.parse(fs.readFileSync(FICHIER_MESSAGES, "utf8")); }
+  catch (e) { return []; }
+}
+
+function ecrireMessages(liste) {
+  const temporaire = FICHIER_MESSAGES + ".tmp";
+  fs.writeFileSync(temporaire, JSON.stringify(liste, null, 2) + "\n");
+  fs.renameSync(temporaire, FICHIER_MESSAGES);
+}
+
+/* Notification par e-mail via FormSubmit (meilleur effort : n'empêche jamais
+   l'enregistrement du message si l'envoi échoue). */
+async function notifierParEmail(message) {
+  const contenu = lireContenu();
+  const dest = (contenu.coordonnees && (contenu.coordonnees.emailDevis || contenu.coordonnees.email) || "").trim();
+  if (!dest) return;
+  const controleur = new AbortController();
+  const minuteur = setTimeout(() => controleur.abort(), 8000);
+  try {
+    await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(dest), {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({
+        _subject: "Nouvelle demande via le site — Les Gourmets du Perche",
+        Nom: message.nom, Email: message.email, Téléphone: message.telephone,
+        "Type de demande": message.type, "Date de l'événement": message.dateEvenement,
+        "Nombre de convives": message.convives, Message: message.message
+      }),
+      signal: controleur.signal
+    });
+  } finally {
+    clearTimeout(minuteur);
+  }
 }
 
 /* ---------- Avis Google (synchronisation automatique) ---------- */
@@ -393,6 +432,56 @@ app.post("/api/admin/avis-google/rafraichir", exigerConnexion, async (req, res) 
   } catch (erreur) {
     res.status(502).json({ erreur: "Synchronisation impossible : " + erreur.message });
   }
+});
+
+/* ---------- Formulaire de contact (public) ---------- */
+
+app.post("/api/contact", async (req, res) => {
+  const b = req.body || {};
+  if (chaine(b._honey, 100)) return res.json({ ok: true }); // piège anti-spam
+  const nom = chaine(b.nom, 120);
+  const email = chaine(b.email, 120);
+  const message = chaine(b.message, 3000);
+  if (!nom || !email || !message) {
+    return res.status(400).json({ erreur: "Merci d'indiquer votre nom, votre e-mail et votre message." });
+  }
+  const msg = {
+    id: Date.now().toString(36) + crypto.randomBytes(3).toString("hex"),
+    date: Date.now(),
+    nom, email,
+    telephone: chaine(b.telephone, 40),
+    type: chaine(b.type_demande, 80),
+    dateEvenement: chaine(b.date_evenement, 40),
+    convives: chaine(b.convives != null ? String(b.convives) : "", 20),
+    message,
+    lu: false, traite: false
+  };
+  const liste = lireMessages();
+  liste.unshift(msg);
+  if (liste.length > 1000) liste.length = 1000;
+  ecrireMessages(liste);
+  notifierParEmail(msg).catch(() => {}); // meilleur effort
+  res.json({ ok: true });
+});
+
+app.get("/api/admin/messages", exigerConnexion, (req, res) => {
+  res.json(lireMessages());
+});
+
+app.put("/api/admin/messages/:id", exigerConnexion, (req, res) => {
+  const liste = lireMessages();
+  const m = liste.find((x) => x.id === req.params.id);
+  if (!m) return res.status(404).json({ erreur: "Message introuvable." });
+  if (typeof req.body.lu === "boolean") m.lu = req.body.lu;
+  if (typeof req.body.traite === "boolean") m.traite = req.body.traite;
+  ecrireMessages(liste);
+  res.json({ ok: true });
+});
+
+app.delete("/api/admin/messages/:id", exigerConnexion, (req, res) => {
+  const liste = lireMessages().filter((x) => x.id !== req.params.id);
+  ecrireMessages(liste);
+  res.json({ ok: true });
 });
 
 /* ---------- Contenu public & fichiers ---------- */
