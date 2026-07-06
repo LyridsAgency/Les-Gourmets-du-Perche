@@ -76,31 +76,6 @@ function ecrireMessages(liste) {
   fs.renameSync(temporaire, FICHIER_MESSAGES);
 }
 
-/* Notification par e-mail via FormSubmit (meilleur effort : n'empêche jamais
-   l'enregistrement du message si l'envoi échoue). */
-async function notifierParEmail(message) {
-  const contenu = lireContenu();
-  const dest = (contenu.coordonnees && (contenu.coordonnees.emailDevis || contenu.coordonnees.email) || "").trim();
-  if (!dest) return;
-  const controleur = new AbortController();
-  const minuteur = setTimeout(() => controleur.abort(), 8000);
-  try {
-    await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(dest), {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({
-        _subject: "Nouvelle demande via le site — Les Gourmets du Perche",
-        Nom: message.nom, Email: message.email, Téléphone: message.telephone,
-        "Type de demande": message.type, "Date de l'événement": message.dateEvenement,
-        "Nombre de convives": message.convives, Message: message.message
-      }),
-      signal: controleur.signal
-    });
-  } finally {
-    clearTimeout(minuteur);
-  }
-}
-
 /* ---------- Avis Google (synchronisation automatique) ---------- */
 
 function lireCacheAvisGoogle() {
@@ -240,8 +215,7 @@ function assainirContenu(recu, securiteExistante) {
     coordonnees: {
       telLongny: chaine(c.coordonnees && c.coordonnees.telLongny, 30),
       telIrai: chaine(c.coordonnees && c.coordonnees.telIrai, 30),
-      email: chaine(c.coordonnees && c.coordonnees.email, 120),
-      emailDevis: chaine(c.coordonnees && c.coordonnees.emailDevis, 120)
+      email: chaine(c.coordonnees && c.coordonnees.email, 120)
     },
     reseaux: {
       facebook: chaine(c.reseaux && c.reseaux.facebook, 300),
@@ -460,7 +434,6 @@ app.post("/api/contact", async (req, res) => {
   liste.unshift(msg);
   if (liste.length > 1000) liste.length = 1000;
   ecrireMessages(liste);
-  notifierParEmail(msg).catch(() => {}); // meilleur effort
   res.json({ ok: true });
 });
 

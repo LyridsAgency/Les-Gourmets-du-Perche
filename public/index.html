@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.openstreetmap.org; connect-src 'self'; form-action https://formsubmit.co; base-uri 'self'; object-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; frame-src https://www.openstreetmap.org; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'">
   <title>Les Gourmets du Perche — Boucherie Charcuterie Traiteur | Maison Brard, Longny-au-Perche</title>
   <meta name="description" content="Les Gourmets du Perche — Maison Brard, artisan boucher charcutier traiteur à Longny-au-Perche et Irai (Orne). Viandes de qualité, charcuterie maison, plats cuisinés et traiteur pour mariages et réceptions. ☎ 02 33 73 62 51">
   <meta property="og:title" content="Les Gourmets du Perche — Boucherie Charcuterie Traiteur">
@@ -459,10 +459,7 @@
             prestations traiteur.
           </div>
         </div>
-        <form class="formulaire reveal" id="formDevis" action="https://formsubmit.co/lesgourmetsduperche@gmail.com" method="POST">
-          <input type="hidden" name="_subject" value="Nouvelle demande via le site — Les Gourmets du Perche">
-          <input type="hidden" name="_captcha" value="false">
-          <input type="hidden" name="_template" value="table">
+        <form class="formulaire reveal" id="formDevis" action="/api/contact" method="POST">
           <input type="text" name="_honey" class="champ-cache" tabindex="-1" autocomplete="off">
           <h3>Demande de devis ou de renseignement</h3>
           <div class="champ-2col">

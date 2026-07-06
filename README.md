@@ -81,9 +81,10 @@ directement par le serveur.
 
 ## Mise en relation avec les clients
 
-- **Formulaire de devis** : envoyé via [FormSubmit](https://formsubmit.co) vers
-  `lesgourmetsduperche@gmail.com` (au premier envoi, cliquer sur l'e-mail
-  d'activation reçu — une seule fois).
+- **Formulaire de devis** : envoyé au serveur (`POST /api/contact`) et enregistré
+  dans `DATA_DIR/messages.json`. Les demandes se consultent dans la rubrique
+  **Messages reçus** de l'administration (filtres, marquage lu / traité,
+  suppression, e-mail et téléphone cliquables). Aucun service e-mail tiers.
 - **Téléphones cliquables** partout + bouton d'appel flottant sur mobile.
 - **Référencement local** : données structurées Schema.org (`ButcherShop`).
 

@@ -157,7 +157,6 @@
     $("champTelLongny").value = contenu.coordonnees.telLongny || "";
     $("champTelIrai").value = contenu.coordonnees.telIrai || "";
     $("champEmail").value = contenu.coordonnees.email || "";
-    $("champEmailDevis").value = contenu.coordonnees.emailDevis || "";
     $("champFacebook").value = contenu.reseaux.facebook || "";
     $("champInstagram").value = contenu.reseaux.instagram || "";
     $("champTiktok").value = contenu.reseaux.tiktok || "";
@@ -777,8 +776,7 @@
     contenu.coordonnees = {
       telLongny: $("champTelLongny").value.trim(),
       telIrai: $("champTelIrai").value.trim(),
-      email: $("champEmail").value.trim(),
-      emailDevis: $("champEmailDevis").value.trim()
+      email: $("champEmail").value.trim()
     };
     contenu.reseaux = {
       facebook: $("champFacebook").value.trim(),
